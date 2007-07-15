@@ -10,6 +10,10 @@
  * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
  */
 
+require_once('Net/Socket.php');
+require_once('Log.php');
+require_once('Validate.php');
+
 /**
  * Net_Vpopmaild 
  * 
@@ -1776,7 +1780,7 @@ class Net_Vpopmaild {
                     }
                     continue;
                 } else {
-                    if ($this->validEmailAddress(ereg_replace('^&', '', $val))) {
+                    if (Validate::email(ereg_replace('^&', '', $val), array('use_rfc822' => 1))) {
                         $is_forwarded = true;
                         $defaults['routing'] = 'routing_forwarded';
                         $defaults['forward'] = ereg_replace('^&', '', $val);
@@ -1903,23 +1907,6 @@ class Net_Vpopmaild {
         return $contentArray;
     }
 
-    /**
-     * validEmailAddress 
-     * 
-     * Simple wrapper for Mail_RFC822::parseAddressList() that returns
-     * true or false
-     * 
-     * @param mixed $email 
-     * @access public
-     * @return void
-     */
-    public static function validEmailAddress($email) {
-        $result = Mail_RFC822::parseAddressList($email, '');
-        if (PEAR::isError($result)) {
-            return false;
-        }
-        return true;
-    }
     /**
      * displayForwardLine
      *
