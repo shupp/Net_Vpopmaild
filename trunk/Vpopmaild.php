@@ -52,9 +52,9 @@ class Net_Vpopmaild {
      * Actual socket from Net_Socket
      * 
      * @var mixed
-     * @access public
+     * @access private
      */
-    public $socket = null;
+    private $socket = null;
     /**
      * debug 
      * 
@@ -75,9 +75,9 @@ class Net_Vpopmaild {
      * log 
      * 
      * @var mixed
-     * @access public
+     * @access private
      */
-    public $log = null;
+    private $log = null;
     /**
      * logFile
      * 
