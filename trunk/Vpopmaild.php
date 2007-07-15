@@ -13,6 +13,7 @@
 require_once('Net/Socket.php');
 require_once('Log.php');
 require_once('Validate.php');
+require_once('Net/Vpopmaild/Exception.php');
 
 /**
  * Net_Vpopmaild 
@@ -184,17 +185,17 @@ class Net_Vpopmaild {
         if ($this->debug > 0 && is_null($this->log)) {
             $this->log = Log::factory('file', $this->logFile);
             if (is_null($this->log)) {
-                throw new Exception("Error creating Log object");
+                throw new Net_Vpopmaild_Exception("Error creating Log object");
             }
         }
         $this->socket = new Net_Socket();
         $result = $this->socket->connect($this->address, $this->port, null, 30);
         if (PEAR::isError($result)) {
-            throw new Exception($result->getMessage());
+            throw new Net_Vpopmaild_Exception($result->getMessage());
         }
         $in = $this->sockRead();
         if (!$this->statusOk($in)) {
-            throw new Exception("Error: initial status: $in");
+            throw new Net_Vpopmaild_Exception("Error: initial status: $in");
         }
     }
 
