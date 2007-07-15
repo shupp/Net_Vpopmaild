@@ -1097,7 +1097,8 @@ class Net_Vpopmaild {
      */
     public function setLimits($domain, $limits)
     {
-        $stringParms = array(   'max_popaccounts',
+        static $stringParms = array(
+                                'max_popaccounts',
                                 'max_aliases',
                                 'max_forwards',
                                 'max_autoresponders',
@@ -1107,7 +1108,8 @@ class Net_Vpopmaild {
                                 'default_quota',
                                 'default_maxmsgcount');
 
-        $flagParms = array(     'disable_pop',
+        static $flagParms = array(
+                                'disable_pop',
                                 'disable_imap',
                                 'disable_dialup',
                                 'disable_password_changing',
