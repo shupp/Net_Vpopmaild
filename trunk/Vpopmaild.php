@@ -226,7 +226,7 @@ class Net_Vpopmaild {
      */
     public function statusOk($data)
     {
-        if (ereg('^[+]OK', $data)) {
+        if (preg_match('/^[+]OK/', $data)) {
             return true;
         }
         return false;
@@ -244,7 +244,7 @@ class Net_Vpopmaild {
      */
     public function statusOkMore($data)
     {
-        if (ereg('^[+]OK[+]$', $data)) {
+        if (preg_match('/^[+]OK[+]$/', $data)) {
             return true;
         }
         return false;
@@ -261,7 +261,7 @@ class Net_Vpopmaild {
      */
     public function statusOkNoMore($data)
     {
-        if (ereg('^[+]OK$', $data)) {
+        if (preg_match('/^[+]OK$/', $data)) {
             return true;
         }
         return false;
@@ -278,7 +278,7 @@ class Net_Vpopmaild {
      */
     public function statusErr($data)
     {
-        if (ereg('^[-]ERR ', $data)) {
+        if (preg_match('/^[-]ERR /', $data)) {
             return true;
         }
         return false;
@@ -295,7 +295,7 @@ class Net_Vpopmaild {
      */
     public function dotOnly($data)
     {
-        if (ereg('^[.]$', $data)) {
+        if (preg_match('/^[.]$/', $data)) {
             return true;
         }
         return false;
@@ -593,7 +593,7 @@ class Net_Vpopmaild {
         if ($type == 'dir') {
             $basePath.= '/';
         }
-        $basePath = ereg_replace('//', '/', $basePath);
+        $basePath = preg_replace('/\/\//', '/', $basePath);
         return $basePath;
     }
     /**
@@ -782,7 +782,7 @@ class Net_Vpopmaild {
         if (count($dotQmail['Program']) > 1)  { #  Too many programs
             return PEAR::raiseError('ERR - too many programs in robot dotqmail file');
         }
-        if (!ereg($this->vpopmail_robot_program, $dotQmail['Program'][0])) {
+        if (!preg_match("/{$this->vpopmail_robot_program}/", $dotQmail['Program'][0])) {
             return PEAR::raiseError('ERR - Mail Robot program not found');
         }
         list($Program, $Time, $Number, $MessageFile, $RobotPath) = explode(' ', $dotQmail['Program'][0]);
@@ -1727,8 +1727,8 @@ class Net_Vpopmaild {
      * @return string
      */
     function getQuota($quota) {
-        if (ereg('S$', $quota)) {
-            $quota = ereg_replace('S$', '', $quota);
+        if (preg_match('/S$/', $quota)) {
+            $quota = preg_replace('/S$/', '', $quota);
             $quota = $quota/1024;
             $quota = $quota/1024;
             $quota = $quota.'MB';
@@ -1776,17 +1776,17 @@ class Net_Vpopmaild {
                     $defaults['save_a_copy_checked'] = ' checked';
                     continue;
                 }
-                if (ereg($this->vpopmail_robot_program, $val)) {
+                if (preg_match("/{$this->vpopmail_robot_program}/", $val)) {
                     $vacation_array = $this->getVacation($val, $account_info);
                     while (list($vacKey, $vacVal) = each($vacation_array)) {
                         $defaults[$vacKey] = $vacVal;
                     }
                     continue;
                 } else {
-                    if (Validate::email(ereg_replace('^&', '', $val), array('use_rfc822' => 1))) {
+                    if (Validate::email(preg_replace('/^&/', '', $val), array('use_rfc822' => 1))) {
                         $is_forwarded = true;
                         $defaults['routing'] = 'routing_forwarded';
-                        $defaults['forward'] = ereg_replace('^&', '', $val);
+                        $defaults['forward'] = preg_replace('/^&/', '', $val);
                     }
                 }
             }
@@ -1812,7 +1812,7 @@ class Net_Vpopmaild {
         if ($line == '') {
             $path = $user_info['user_dir'].'/vacation/message';
         } else {
-            $line = ereg_replace('^[|][ ]*', '', $line);
+            $line = preg_replace('/^[|][ ]*/', '', $line);
             $array = explode(' ', $line);
             $path = $array[3];
         }
@@ -1868,7 +1868,7 @@ class Net_Vpopmaild {
             if ($count > 0) {
                 $string.= ', ';
             }
-            $string.= ereg_replace('^&', '', $val);
+            $string.= preg_replace('/^&/', '', $val);
             $count++;
         }
         return $string;
@@ -1888,7 +1888,7 @@ class Net_Vpopmaild {
         // generate unique list of aliases
         $aliasList = array();
         while (list($key, $val) = each($aliasArray)) {
-            $alias = ereg_replace('(^[^ ]+) .*$', '\1', $val);
+            $alias = preg_replace('/(^[^ ]+) .*$/', '$1', $val);
             if (!in_array($alias, $aliasList)) {
                 array_push($aliasList, $alias);
             }
@@ -1900,8 +1900,8 @@ class Net_Vpopmaild {
             reset($aliasArray);
             $count = 0;
             while (list($lkey, $lval) = each($aliasArray)) {
-                if (ereg("^$val ", $lval)) {
-                    $aliasLine = ereg_replace('^[^ ]+ (.*$)', '\1', $lval);
+                if (preg_match("/^$val /", $lval)) {
+                    $aliasLine = preg_replace('/^[^ ]+ (.*$)/', '$1', $lval);
                     $contentArray[$val][$count] = $aliasLine;
                     $count++;
                 }
@@ -1918,8 +1918,8 @@ class Net_Vpopmaild {
      * @return mixed null on failure, string on success
      */
     function displayForwardLine($line) {
-        if (ereg('^&', $line)) {
-            return ereg_replace('^&', '', $line);
+        if (preg_match('/^&/', $line)) {
+            return preg_replace('/^&/', '', $line);
         }
     }
 
@@ -1940,11 +1940,11 @@ class Net_Vpopmaild {
         foreach ($raw_array as $parentkey => $parentval) {
             $is_type = 'forwards';
             foreach ($parentval as $key => $val) {
-                if (ereg('[|].*' . $this->vpopmail_robot_program, $val)) {
+                if (preg_match("/[|].*$this->vpopmail_robot_program/", $val)) {
                     $is_type = 'responders';
                     break;
                 }
-                if (ereg('[|].*ezmlm-', $val)) {
+                if (preg_match('/[|].*ezmlm-/', $val)) {
                     $is_type = 'lists';
                     break;
                 }
