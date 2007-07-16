@@ -191,7 +191,7 @@ class Net_Vpopmaild {
         $this->socket = new Net_Socket();
         $result = $this->socket->connect($this->address, $this->port, null, 30);
         if (PEAR::isError($result)) {
-            throw new Net_Vpopmaild_Exception($result->getMessage());
+            throw new Net_Vpopmaild_Exception($result);
         }
         $in = $this->sockRead();
         if (!$this->statusOk($in)) {
@@ -315,7 +315,7 @@ class Net_Vpopmaild {
         $this->recordio("sockWrite send: $data");
         $result = $this->socket->writeLine($data);
         if (PEAR::isError($result)) {
-            return $result;
+            throw new Net_Vpopmaild_Exception($result);
         }
         return true;
     }
@@ -332,6 +332,9 @@ class Net_Vpopmaild {
     {
         $in = $this->socket->readLine();
         $this->recordio("sockRead Read: $in");
+        if (PEAR::isError($in)) {
+            throw new Net_Vpopmaild_Exception($in);
+        }
         return $in;
     }
 
@@ -346,7 +349,7 @@ class Net_Vpopmaild {
     {
         $in = $this->socket->read($maxLen);
         if (PEAR::isError($in)) {
-            return $in;
+            throw new Net_Vpopmaild_Exception($in);
         }
         $this->recordio("rawSockRead Read: $in");
         return $in = trim($in);
@@ -381,12 +384,6 @@ class Net_Vpopmaild {
         }
     }
 
-
-
-
-
-
-
     /**
      * clogin 
      * 
@@ -398,13 +395,7 @@ class Net_Vpopmaild {
     public function clogin($email, $password)
     {
         $status = $this->sockWrite("clogin $email $password");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         if (!$this->StatusOk($in)) {
             return PEAR::raiseError("Login failed - " . $in);
         }
@@ -469,13 +460,8 @@ class Net_Vpopmaild {
      */
     public function getIPMap($ip)
     {
-        if ($status = $this->sockWrite("get_ip_map $ip")) {
-            return PEAR::raiseError("Error - write to socket failed! $status");
-        }
+        $this->sockWrite("get_ip_map $ip");
         $status = $this->sockRead();
-        if ($this->statusErr($status)) {
-            return PEAR::raiseError($status);
-        }
         $lists = array();
         $in = $this->sockRead();
         while (!$this->statusErr($in) && !$this->statusOk($in) && !$this->dotOnly($in)) {
@@ -497,13 +483,7 @@ class Net_Vpopmaild {
     public function addIPMap($domain, $ip)
     {
         $status = $this->sockWrite("add_ip_map $ip $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -520,9 +500,6 @@ class Net_Vpopmaild {
     public function delIPMap($domain, $ip)
     {
         $status = $this->sockWrite("del_ip_map $ip $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
@@ -540,21 +517,12 @@ class Net_Vpopmaild {
     public function showIPMap()
     {
         $status = $this->sockWrite("show_ip_map");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
         $lists = array();
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusError($in)) {
             list($ip, $domain) = explode(' ', $in);
             if (!empty($lists[$ip])) {
@@ -563,9 +531,6 @@ class Net_Vpopmaild {
                 $lists[$ip] = $domain;
             }
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         ksort($lists);
         return $lists;
@@ -610,9 +575,6 @@ class Net_Vpopmaild {
         $this->recordio("<<--  Start readInfo  -->>");
         $infoArray = array();
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             if ('' != $in) {
                 unset($value);
@@ -621,9 +583,6 @@ class Net_Vpopmaild {
                 $infoArray[$name] = $value;
             }
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         $this->recordio("readInfo collected: ");
         $this->recordio(print_r($infoArray, 1));
@@ -820,13 +779,7 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user);
         $status = $this->sockWrite("list_lists $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -835,9 +788,6 @@ class Net_Vpopmaild {
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             $lists[] = $in;
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         return $lists;
     }
@@ -854,27 +804,15 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user);
         $status = $this->sockWrite("list_alias $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
         $alii = array();
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             $alii[] = $in;
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         return $alii;
     }
@@ -892,13 +830,7 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("rm_file $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -919,24 +851,12 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("write_file $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         reset($contents);
         while (list(, $line) = each($contents)) {
             $status = $this->sockWrite($line);
-            if (PEAR::isError($status)) {
-                return $status;
-            }
         }
         $status = $this->sockWrite(".");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -962,9 +882,6 @@ class Net_Vpopmaild {
             $basePath .= "/".$path;
         }
         $status = $this->sockWrite("read_file $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
@@ -974,9 +891,6 @@ class Net_Vpopmaild {
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             $fileContents[] = $in;
             $in = $this->sockRead();
-            if (PEAR::isError($status)) {
-                return $status;
-            }
         }
         return $fileContents;
     }
@@ -994,28 +908,16 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user, $path, 'dir');
         $status = $this->sockWrite("list_dir $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
         $directoryContents = array();
         $in = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             list($dirName, $type) = explode(' ', $in);
             $directoryContents[$dirName] = $type;
             $in = $this->sockRead();
-            if (PEAR::isError($status)) {
-                return $status;
-            }
         }
         return ksort($directoryContents);
     }
@@ -1032,9 +934,6 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("rm_dir $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return PEAR::raiseError("command rmdir failed - $status");
@@ -1056,9 +955,6 @@ class Net_Vpopmaild {
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("mk_dir $basePath");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
@@ -1076,9 +972,6 @@ class Net_Vpopmaild {
     public function getLimits($domain)
     {
         $status = $this->sockWrite("get_limits $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
@@ -1129,17 +1022,11 @@ class Net_Vpopmaild {
                                 'perm_defaultquota');
 
         $status = $this->sockWrite("set_limits $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         // string parms
         while (list(, $name) = each($stringParms)) {
             if (!empty($limits[$name])) {
                 $value = $limits[$name];
                 $status = $this->sockWrite("$name $value");
-                if (PEAR::isError($status)) {
-                    return $status;
-                }
             }
         }
         // flag parms
@@ -1147,19 +1034,10 @@ class Net_Vpopmaild {
             if (!empty($limits[$name])) {
                 $value = $limits[$name];
                 $status = $this->sockWrite("$name $value");
-                if (PEAR::isError($status)) {
-                    return $status;
-                }
             }
         }
         $status = $this->sockWrite(".");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1176,13 +1054,7 @@ class Net_Vpopmaild {
     public function delLimits($domain)
     {
         $status = $this->sockWrite("del_limits $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1199,13 +1071,7 @@ class Net_Vpopmaild {
     public function domainInfo($domain)
     {
         $out = $this->sockWrite("dom_info $domain");
-        if (PEAR::isError($out))  {
-            return $out;
-        }
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         if (!$this->statusOk($in)) {
             return PEAR::raiseError("dom_info failed - " . $in);
         }
@@ -1222,43 +1088,24 @@ class Net_Vpopmaild {
     public function listDomains($page = 0, $perPage = 0)
     {
         $return = $this->sockWrite("list_domains $page $perPage");
-        if (PEAR::isError($return)) {
-            return $return;
-        }
-
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError("command failed - " . $status);
         }
         $domains = array();
         $list = array();
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             list($parent, $domain) = explode(' ', $in, 2);
             $domains[$domain] = $parent;
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         return $domains;
     }
     public function domainCount()
     {
         $status = $this->sockWrite("domain_count");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1280,13 +1127,7 @@ class Net_Vpopmaild {
     public function addDomain($domain, $password)
     {
         $status = $this->sockWrite("add_domain $domain $password");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1305,13 +1146,7 @@ class Net_Vpopmaild {
     {
         $this->Error = '';
         $status = $this->sockWrite("add_alias_domain $domain $alias");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1327,13 +1162,7 @@ class Net_Vpopmaild {
     public function delDomain($domain)
     {
         $status = $this->sockWrite("del_domain $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1353,22 +1182,13 @@ class Net_Vpopmaild {
     public function findDomain($domain, $perPage)
     {
         $status = $this->sockWrite("find_domain $domain $perPage");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             list(, $page) = explode(' ', $in, 2);
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         return $page;
     }
@@ -1385,13 +1205,7 @@ class Net_Vpopmaild {
     public function addUser($domain, $user, $password)
     {
         $status = $this->sockWrite("add_user $user@$domain $password");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1409,13 +1223,7 @@ class Net_Vpopmaild {
     public function delUser($domain, $user)
     {
         $status = $this->sockWrite("del_user $user@$domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1461,16 +1269,10 @@ class Net_Vpopmaild {
                                 'delete_spam',);
 
         $status = $this->sockWrite("mod_user $user@$domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         while (list(, $name) = each($stringParms)) {
             if (!empty($userInfo[$name])) {
                 $value = $userInfo[$name];
                 $status = $this->sockWrite("$name $value");
-                if (PEAR::isError($status)) {
-                    return $status;
-                }
             }
         }
         while (list(, $name) = each($flagParms)) {
@@ -1478,18 +1280,9 @@ class Net_Vpopmaild {
             $value = $this->getGidBit($userInfo['gidflags'], $name, $flip);
             $value = ($value) ? '1' : '0';
             $status = $this->sockWrite("$name $value");
-            if (PEAR::isError($status)) {
-                return $status;
-            }
         }
         $status = $this->sockWrite(".");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1510,13 +1303,7 @@ class Net_Vpopmaild {
     public function userInfo($domain, $user)
     {
         $status = $this->sockWrite("user_info $user@$domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1526,13 +1313,7 @@ class Net_Vpopmaild {
     public function listUsers($domain, $page = 0, $perPage = 0)
     {
         $status = $this->sockWrite("list_users $domain $page $perPage");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1541,9 +1322,6 @@ class Net_Vpopmaild {
         $list = array();
         $this->recordio("<<--  Start collecting user data  -->>");
         $in = $this->sockRead();
-        if (PEAR::isError($in)) {
-            return $in;
-        }
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in) && $i < 10) {
             list($name, $value) = explode(' ', $in, 2);
             if ('name' == $name) {
@@ -1556,9 +1334,6 @@ class Net_Vpopmaild {
                 $user[$name] = trim($value);
             }
             $in = $this->sockRead();
-            if (PEAR::isError($in)) {
-                return $in;
-            }
         }
         if (!empty($currentName)) {
             $list[$currentName] = $user;
@@ -1576,9 +1351,6 @@ class Net_Vpopmaild {
     public function userCount($domain)
     {
         $status = $this->sockWrite("user_count $domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return PEAR::raiseError("command failed - $in");
@@ -1602,13 +1374,7 @@ class Net_Vpopmaild {
     public function getLastAuthIP($domain, $user)
     {
         $status = $this->sockWrite("get_lastauthip $user@$domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
@@ -1627,13 +1393,7 @@ class Net_Vpopmaild {
     public function getLastAuth($domain, $user)
     {
         $status = $this->sockWrite("get_lastauth $user@$domain");
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         $status = $this->sockRead();
-        if (PEAR::isError($status)) {
-            return $status;
-        }
         if (!$this->statusOk($status)) {
             return PEAR::raiseError($status);
         }
