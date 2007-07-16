@@ -12,16 +12,15 @@
 
 /**
  *  require_once 'PEAR/Exception.php';
- *  
- *  Exception class for Net_Vpopmaild
  */
 require_once 'PEAR/Exception.php';
 
 /**
  * Net_Vpopmaild_Exception
  *
- * A small layer above PEAR_Exception that allows you to pass PEAR_Error
- * as the message to your exceptions.
+ * A small layer above 
+ * {@link http://pear.php.net/manual/en/core.pear.pear-exception.php PEAR_Exception}
+ * that allows you to pass PEAR_Error as the message to your exceptions.
  *
  * @author      Joe Stump <joe@joestump.net>
  * @package     Net_Vpopmaild
