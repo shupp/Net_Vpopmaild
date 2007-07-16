@@ -184,13 +184,33 @@ class Net_Vpopmaild {
      */
     public function  __construct()
     {
+        $this->socket = new Net_Socket();
+    }
+
+    public function setDebug($value = 1)
+    {
+        // Set debug value
+        $this->debug = $value;
+        // Instantiate Log object if necessary
         if ($this->debug > 0 && is_null($this->log)) {
             $this->log = Log::factory('file', $this->logFile);
             if (is_null($this->log)) {
                 throw new Net_Vpopmaild_Exception("Error creating Log object");
             }
         }
-        $this->socket = new Net_Socket();
+    }
+
+    /**
+     * connect 
+     * 
+     * Make connection to vpopmaild.
+     * 
+     * @access public
+     * @return void
+     * @throws Net_Vpopmaild_Exception if connection initial status fails
+     */
+    public function connect()
+    {
         $result = $this->socket->connect($this->address, $this->port, null, 30);
         if (PEAR::isError($result)) {
             throw new Net_Vpopmaild_Exception($result);
@@ -200,6 +220,7 @@ class Net_Vpopmaild {
             throw new Net_Vpopmaild_Exception("Error: initial status: $in");
         }
     }
+    
 
     /**
      * recordio 
@@ -207,10 +228,10 @@ class Net_Vpopmaild {
      * Log i/o to Log instance
      * 
      * @param string $data 
-     * @access public
+     * @access private
      * @return void
      */
-    public function recordio($data)
+    private function recordio($data)
     {
         if ($this->debug > 0) {
             $this->log->log($data);
