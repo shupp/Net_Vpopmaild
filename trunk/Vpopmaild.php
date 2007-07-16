@@ -228,10 +228,10 @@ class Net_Vpopmaild {
      * Log i/o to Log instance
      * 
      * @param string $data 
-     * @access private
+     * @access public
      * @return void
      */
-    private function recordio($data)
+    public function recordio($data)
     {
         if ($this->debug > 0) {
             $this->log->log($data);
@@ -765,7 +765,7 @@ class Net_Vpopmaild {
         if (count($dotQmail['Program']) > 1)  { #  Too many programs
             return 'ERR - too many programs in robot dotqmail file';
         }
-        if (!preg_match("/{$this->vpopmail_robot_program}/", $dotQmail['Program'][0])) {
+        if (!preg_match("({$this->vpopmail_robot_program})", $dotQmail['Program'][0])) {
             return 'ERR - Mail Robot program not found';
         }
         list($Program, $Time, $Number, $MessageFile, $RobotPath) = explode(' ', $dotQmail['Program'][0]);
@@ -1442,9 +1442,8 @@ class Net_Vpopmaild {
      */
     public function authenticate($email, $password)
     {
-        $result = $this->clogin($email, $password);
-        if (PEAR::isError($result)) {
-            return $result;
+        if (($result = $this->clogin($email, $password)) == false) {
+            return false;
         }
         // Easy way to access domain
         $email_array = explode('@', $email);
@@ -1565,7 +1564,7 @@ class Net_Vpopmaild {
                     $defaults['save_a_copy_checked'] = ' checked';
                     continue;
                 }
-                if (preg_match("/{$this->vpopmail_robot_program}/", $val)) {
+                if (preg_match("({$this->vpopmail_robot_program})", $val)) {
                     $vacation_array = $this->getVacation($val, $account_info);
                     while (list($vacKey, $vacVal) = each($vacation_array)) {
                         $defaults[$vacKey] = $vacVal;
@@ -1729,7 +1728,7 @@ class Net_Vpopmaild {
         foreach ($raw_array as $parentkey => $parentval) {
             $is_type = 'forwards';
             foreach ($parentval as $key => $val) {
-                if (preg_match("/[|].*$this->vpopmail_robot_program/", $val)) {
+                if (preg_match('([|].*' . $this->vpopmail_robot_program . ')', $val)) {
                     $is_type = 'responders';
                     break;
                 }
