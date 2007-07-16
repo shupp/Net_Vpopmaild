@@ -8,7 +8,7 @@ phpdoc \
     -ti 'Net_Vpopmaild Documentation' \
     -dn 'Net_Vpopmaild' \
     -t $DOCSDIR.tmp \
-    -f ./Vpopmaild.php,Vpopmaild/Exception.php \
+    -f ./Vpopmaild.php,Vpopmaild/Exception.php,$PEARDIR/PEAR/Exception.php \
     -o HTML:frames:DOM/earthli
 
 mv $DOCSDIR $DOCSDIR.old
