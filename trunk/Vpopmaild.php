@@ -8,11 +8,35 @@
  * @author Bill Shupp <hostmaster@shupp.org> 
  * @author Rick Widmer
  * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @todo Finish ezmlm functions
+ * @todo Do not rely on PHP4 packages
+ * @todo Clean up robot error handling
+ * @todo Finish going over documentation
  */
 
+/**
+ *  require_once('Net/Socket.php');
+ *  
+ *  This package relies on Net_Socket
+ */
 require_once('Net/Socket.php');
+/**
+ *  require_once('Log.php');
+ *  
+ *  This package relies on Log
+ */
 require_once('Log.php');
+/**
+ *  require_once('Validate.php');
+ *  
+ *  This package relies on Validate
+ */
 require_once('Validate.php');
+/**
+ *  require_once('Net/Vpopmaild/Exception.php');
+ *  
+ *  Exception class for this package
+ */
 require_once('Net/Vpopmaild/Exception.php');
 
 /**
@@ -58,14 +82,17 @@ class Net_Vpopmaild {
     /**
      * debug 
      * 
-     * Set to 1 to enable logging
+     * Set to 1 to enable logging.  Can be set by {@link setDebug()}
      * 
      * @var mixed
      * @access public
+     * @see function setDebug
      */
     public $debug = 0;
     /**
      * loginUser 
+     * 
+     * This is an array of the logged in user's info.
      * 
      * @var mixed
      * @access public
@@ -74,6 +101,8 @@ class Net_Vpopmaild {
     /**
      * log 
      * 
+     * instance of PEAR Log
+     * 
      * @var mixed
      * @access private
      */
@@ -81,12 +110,16 @@ class Net_Vpopmaild {
     /**
      * logFile
      * 
+     * Location of log file
+     * 
      * @var mixed
      * @access public
      */
     public $logFile = '/tmp/vpopmaild.log';
     /**
      * gidFlagValues 
+     * 
+     * gid big values for account limits
      * 
      * @var array
      * @access public
@@ -114,6 +147,8 @@ class Net_Vpopmaild {
     /**
      * vpopmail_robot_program 
      * 
+     * path to autorespond
+     * 
      * @var string
      * @access public
      */
@@ -121,12 +156,16 @@ class Net_Vpopmaild {
     /**
      * vpopmail_robot_time 
      * 
+     * autorespond time argument
+     * 
      * @var int
      * @access public
      */
     public $vpopmail_robot_time = 1000;
     /**
      * vpopmail_robot_number 
+     * 
+     * autorespond number argument
      * 
      * @var int
      * @access public
@@ -175,18 +214,26 @@ class Net_Vpopmaild {
     /**
      * __construct 
      * 
-     * Turn on logger if debug is 1.  Create socket.
+     * Create socket.
      * 
      * @access public
      * @return void
-     * @throws Net_Vpopmaild_Exception on Net_Socket::connect() failure, 
-     * Log::factory() failure, and initial status check of the socket.
      */
     public function  __construct()
     {
         $this->socket = new Net_Socket();
     }
 
+    /**
+     * setDebug 
+     * 
+     * Set {@link $debug} (1 by default).
+     * Call this to set {@link $debug} to 1 and enable logging.
+     * 
+     * @param int $value 
+     * @access public
+     * @return void
+     */
     public function setDebug($value = 1)
     {
         // Set debug value
@@ -201,13 +248,29 @@ class Net_Vpopmaild {
     }
 
     /**
+     * accept 
+     * 
+     * Assign {@link $log} an external instance of Log
+     * 
+     * @var object $log 
+     * @access public
+     * @return void
+     */
+    public function accept(&$log)
+    {
+        if ($log instanceof Log) {
+            $this->log = & $log;
+        }
+    }
+
+    /**
      * connect 
      * 
      * Make connection to vpopmaild.
      * 
      * @access public
      * @return void
-     * @throws Net_Vpopmaild_Exception if connection initial status fails
+     * @throws Net_Vpopmaild_Exception if connection or initial status fails
      */
     public function connect()
     {
@@ -225,7 +288,7 @@ class Net_Vpopmaild {
     /**
      * recordio 
      * 
-     * Log i/o to Log instance
+     * Record i/o to {@link $log}
      * 
      * @param string $data 
      * @access public
@@ -366,6 +429,8 @@ class Net_Vpopmaild {
     /**
      * rawSockRead 
      * 
+     * Leftover from vpopmaild.pobj.  Currently not used.
+     * 
      * @param int $maxLen 
      * @access private
      * @return mixed
@@ -384,7 +449,9 @@ class Net_Vpopmaild {
     /**
      * quit 
      * 
-     * send quit command to vpopmaild
+     * send quit command to vpopmaild.
+     * Called by {@link __destruct()}
+     * 
      * 
      * @access protected
      * @return void
@@ -397,7 +464,7 @@ class Net_Vpopmaild {
     /**
      * __destruct 
      * 
-     * Close socket
+     * Send {@link quit()}, Close {@link $socket}.
      * 
      * @access public
      * @return void
@@ -412,6 +479,9 @@ class Net_Vpopmaild {
 
     /**
      * clogin 
+     * 
+     * compact login.  Returns a compact list of user info which is stored in
+     * {@link $loginUser}
      * 
      * @param mixed $email 
      * @param mixed $password 
@@ -431,12 +501,15 @@ class Net_Vpopmaild {
     /**
      * getGidBit 
      * 
+     * Get gid bit flag.
+     * 
      * @param mixed $bitmap 
      * @param mixed $bit 
      * @param mixed $flip 
      * @access public
      * @return bool true on success, false on failure
      * @throws Net_Vpopmaild_Exception if $bit is unknown
+     * @see setGidBit()
      */
     public function getGidBit($bitmap, $bit, $flip = false)
     {
@@ -453,6 +526,8 @@ class Net_Vpopmaild {
     /**
      * setGidBit 
      * 
+     * Set gid bit flag.
+     * 
      * @param mixed $bitmap 
      * @param mixed $bit 
      * @param mixed $value 
@@ -460,6 +535,7 @@ class Net_Vpopmaild {
      * @access public
      * @return void
      * @throws Net_Vpopmaild_Exception if $bit is unknown
+     * @see getGidBit()
      */
     public function setGidBit(&$bitmap, $bit, $value, $flip = false)
     {
@@ -478,9 +554,11 @@ class Net_Vpopmaild {
     /**
      * getIPMap 
      * 
-     * @param mixed $ip 
+     * Get IP Map entry
+     * 
+     * @param array
      * @access public
-     * @return IP Map array
+     * @return array ip map
      */
     public function getIPMap($ip)
     {
@@ -499,6 +577,8 @@ class Net_Vpopmaild {
     /**
      * addIPMap 
      * 
+     * Add IP map entry
+     * 
      * @param mixed $domain 
      * @param mixed $ip 
      * @access public
@@ -516,6 +596,8 @@ class Net_Vpopmaild {
     /**
      * delIPMap 
      * 
+     * Delete IP map entry
+     * 
      * @param mixed $domain 
      * @param mixed $ip 
      * @access public
@@ -532,6 +614,8 @@ class Net_Vpopmaild {
     }
     /**
      * showIPMap 
+     * 
+     * List all IP map entries.
      * 
      * return sorted ip map list
      * 
@@ -616,6 +700,8 @@ class Net_Vpopmaild {
     /**
      * dotQmailSplit 
      * 
+     * Split .qmail file into an array.
+     * 
      * @param mixed $fileContents 
      * @access public
      * @return array
@@ -651,6 +737,8 @@ class Net_Vpopmaild {
     /**
      * robotDel 
      * 
+     * Delete robot.
+     * 
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
@@ -659,7 +747,7 @@ class Net_Vpopmaild {
     public function robotDel($domain, $user)
     {
         $result = $this->robotGet($domain, $user);
-        if (PEAR::isError($result)) {
+        if (!is_array($result)) {
             return $result;
         }
         $robotDir = strtoupper($user);
