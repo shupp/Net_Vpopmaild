@@ -10,6 +10,11 @@
  * @author      Joe Stump <joe@joestump.net>
  */
 
+/**
+ *  require_once 'PEAR/Exception.php';
+ *  
+ *  Exception class for Net_Vpopmaild
+ */
 require_once 'PEAR/Exception.php';
 
 /**
