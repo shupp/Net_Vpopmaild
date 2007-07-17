@@ -142,6 +142,7 @@ class Net_Vpopmaild {
         'no_spamassassin'           => 0x4000, 
         'delete_spam'               => 0x8000, 
         'system_admin_privileges'   => 0x10000, 
+        'system_expert_privileges'  => 0x20000, 
         'no_maildrop'               => 0x40000);
 
     /**
