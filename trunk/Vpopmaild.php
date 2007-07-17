@@ -1526,7 +1526,7 @@ class Net_Vpopmaild {
      * @param mixed $email 
      * @param mixed $password 
      * @access public
-     * @return mixed true on success, PEAR_Error on failure
+     * @return bool true on success, false on failure
      */
     public function authenticate($email, $password)
     {
