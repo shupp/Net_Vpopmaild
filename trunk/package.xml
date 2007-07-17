@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<package version="2.0" xmlns="http://pear.php.net/dtd/package-2.0"
+    xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+    <name>Net_Vpopmaild</name>
+    <channel>pear.merchbox.com</channel>
+    <summary>Class for accessing Vpopmail's vpopmaild daemon</summary>
+    <description>Class for accessing Vpopmail's vpopmaild daemon.  Supports all vpopmaild commands, such as adding/removiving domains, users, robots (autoresponders), and ezmlm lists, as well as modifying domain limits, ip maps, etc</description>
+    <lead>
+        <name>Bill Shupp</name>
+        <user>shupp</user>
+        <email>hostmaster@shupp.org</email>
+        <active>yes</active>
+    </lead>
+    <date>2007-07-16</date>
+    <version>
+        <release>0.0.1</release>
+        <api>0.0.1</api>
+    </version>
+    <stability>
+        <release>alpha</release>
+        <api>alpha</api>
+    </stability>
+    <license uri="http://www.php.net/license">PHP License</license>
+    <notes>Initial PEAR package</notes>
+    <contents>
+        <dir name="/">
+            <dir name="docs" role="doc">
+                <file baseinstalldir="doc/Net_Vpopmaild"
+                      role="doc"
+                      name="docs.sh" />
+                <file baseinstalldir="doc/Net_Vpopmaild"
+                      role="doc"
+                      name="README" />
+            </dir>
+            <dir name="tests" role="test">
+            </dir>
+            <dir name="examples" role="doc" baseinstalldir="doc/Net_Vpopmaild">
+                <file name="login.php"
+                      role="doc" />
+            </dir>
+            <file baseinstalldir="/Net"
+                  name="Vpopmaild.php"
+                  role="php" />
+            <dir name="Vpopmaild" role="php" baseinstalldir="Net">
+            <file baseinstalldir="/Net"
+                  name="Exception.php"
+                  role="php" />
+            </dir>
+        </dir>
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>5.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.4.0b1</min>
+            </pearinstaller>
+            <package>
+                <name>Net_Socket</name>
+                <channel>pear.php.net</channel>
+            </package>
+            <package>
+                <name>Log</name>
+                <channel>pear.php.net</channel>
+            </package>
+            <package>
+                <name>Validate</name>
+                <channel>pear.php.net</channel>
+            </package>
+        </required>
+    </dependencies>
+    <phprelease />
+    <changelog>
+        <release>
+            <version>
+                <release>0.0.1</release>
+                <api>0.0.1</api>
+            </version>
+            <stability>
+                <release>alpha</release>
+                <api>alpha</api>
+            </stability>
+            <date>2007-07-16</date>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes>Initial PEAR package</notes>
+        </release>
+    </changelog>
+</package>
