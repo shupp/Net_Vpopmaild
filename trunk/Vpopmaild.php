@@ -531,7 +531,7 @@ class Net_Vpopmaild {
      * 
      * @param mixed $bitmap 
      * @param mixed $bit 
-     * @param mixed $value 
+     * @param bool $value 
      * @param mixed $flip 
      * @access public
      * @return void
@@ -545,9 +545,9 @@ class Net_Vpopmaild {
         }
         $bitValue = $this->gidFlagValues[$bit];
         if ($flip) {
-            $value = ('t' == $value{0}) ? 0 : $bitValue;
+            $value = ($value == true) ? 0 : $bitValue;
         } else {
-            $value = ('t' == $value{0}) ? $bitValue : 0;
+            $value = ($value == true) ? $bitValue : 0;
         }
         $bitmap = (int)$value|(~(int)$bitValue&(int)$bitmap);
     }
