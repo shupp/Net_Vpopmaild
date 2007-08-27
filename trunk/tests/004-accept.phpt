@@ -1,5 +1,5 @@
 --TEST--
-Net_Vpopmaild::accept()
+Net_Vpopmaild::accept(), recordio()
 --FILE--
 <?php
 require_once('tests-config.php');
@@ -17,6 +17,7 @@ $vp->accept($testLog);
 $vp->setDebug();
 $vp->recordio("testing log file");
 var_dump(file_exists($vp->logFile));
+var_dump(preg_match('/testing log file/', file_get_contents($vp->logFile)));
 ?>
 --CLEAN--
 <?php
@@ -27,3 +28,4 @@ if (file_exists($vp->logFile)) {
 ?>
 --EXPECT--
 bool(true)
+int(1)
