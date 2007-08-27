@@ -7,6 +7,7 @@ $vpopmaildHost = '192.168.1.1';
 $vp = new Net_Vpopmaild;
 $vp->address = $vpopmaildHost;
 $vp->timeout = 5;
+$vp->logFile = '/tmp/billshupp.log';
 
 $sysadminEmail = 'test@test.com';
 $sysadminPass = 'test';
