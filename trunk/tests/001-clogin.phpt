@@ -1,5 +1,5 @@
 --TEST--
-Net_Vpopmaild::connect()
+Net_Vpopmaild::clogin()
 --FILE--
 <?php
 require_once('tests-config.php');

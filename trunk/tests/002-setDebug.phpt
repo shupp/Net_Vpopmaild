@@ -1,0 +1,13 @@
+--TEST--
+Net_Vpopmaild::setDebug()
+--FILE--
+<?php
+require_once('tests-config.php');
+$vp->setDebug();
+var_dump($vp->debug);
+$vp->setDebug(0);
+var_dump($vp->debug);
+?>
+--EXPECT--
+int(1)
+int(0)
