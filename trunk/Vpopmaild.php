@@ -210,7 +210,25 @@ class Net_Vpopmaild {
             'y' => 0, /* ignored */
             'z' => 0);/* ignored */
 
+    /**
+     * timeout 
+     * 
+     * Timeout for Net_Socket::connect();
+     * 
+     * @var int
+     * @access public
+     */
+    public $timeout = 30;
 
+    /**
+     * connected 
+     * 
+     * set to true only when connected.  This is used only by __destruct()
+     * 
+     * @var bool
+     * @access private
+     */
+    private $connected = false;
 
     /**
      * __construct 
@@ -275,10 +293,11 @@ class Net_Vpopmaild {
      */
     public function connect()
     {
-        $result = $this->socket->connect($this->address, $this->port, null, 30);
+        $result = $this->socket->connect($this->address, $this->port, null, $this->timeout);
         if (PEAR::isError($result)) {
             throw new Net_Vpopmaild_Exception($result);
         }
+        $this->connected = true;
         $in = $this->sockRead();
         if (!$this->statusOk($in)) {
             throw new Net_Vpopmaild_Exception("Error: initial status: $in");
@@ -472,7 +491,7 @@ class Net_Vpopmaild {
      */
     public function __destruct()
     {
-        if ($this->socket instanceof Net_Socket) {
+        if ($this->connected) {
             $this->quit();
             $this->socket->disconnect();
         }
