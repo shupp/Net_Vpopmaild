@@ -6,7 +6,7 @@ require_once('tests-config.php');
 try {
     $vp->connect();
 } catch (Net_Vpopmaild_Exception $e) {
-    echo "Error connection to vpopmaild\n";
+    echo "Error connecting to vpopmaild\n";
 }
 ?>
 --EXPECT--
