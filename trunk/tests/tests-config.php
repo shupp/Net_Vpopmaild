@@ -11,4 +11,5 @@ $vp->logFile = '/tmp/billshupp.log';
 
 $sysadminEmail = 'test@test.com';
 $sysadminPass = 'test';
+$domainCount = 2005;
 ?>
