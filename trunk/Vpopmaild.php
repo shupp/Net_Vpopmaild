@@ -578,17 +578,23 @@ class Net_Vpopmaild {
      * 
      * @param array
      * @access public
-     * @return array ip map
+     * @return string domain on success, NULL on failure
      */
     public function getIPMap($ip)
     {
-        $this->sockWrite("get_ip_map $ip");
-        $status = $this->sockRead();
         $lists = array();
+        $this->sockWrite("get_ip_map $ip");
+        $in = $this->sockRead();
+        if (!$this->statusOk($in)) {
+            return NULL;
+        }
         $in = $this->sockRead();
         while (!$this->statusErr($in) && !$this->statusOk($in) && !$this->dotOnly($in)) {
             $lists[] = $in;
             $in = $this->sockRead();
+        }
+        if(count($lists) == 0) {
+            return NULL;
         }
         $exploded = explode(" ", $lists[0]);
         return $exploded[1];
@@ -599,38 +605,38 @@ class Net_Vpopmaild {
      * 
      * Add IP map entry
      * 
-     * @param mixed $domain 
      * @param mixed $ip 
+     * @param mixed $domain 
      * @access public
-     * @return void
-     * throws Net_Vpopmaild_Exception on failure
+     * @return TRUE on success, FALSE on failure
      */
-    public function addIPMap($domain, $ip)
+    public function addIPMap($ip, $domain)
     {
         $status = $this->sockWrite("add_ip_map $ip $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            throw new Net_Vpopmaild_Exception($status);
+            return FALSE;
         }
+        return TRUE;
     }
     /**
      * delIPMap 
      * 
      * Delete IP map entry
      * 
-     * @param mixed $domain 
      * @param mixed $ip 
+     * @param mixed $domain 
      * @access public
-     * @return void
-     * @throws Net_Vpopmaild_Exception on failure
+     * @return TRUE on success, FALSE on failure
      */
-    public function delIPMap($domain, $ip)
+    public function delIPMap($ip, $domain)
     {
         $status = $this->sockWrite("del_ip_map $ip $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            throw new Net_Vpopmaild_Exception($status);
+            return FALSE;
         }
+        return TRUE;
     }
     /**
      * showIPMap 
@@ -651,7 +657,7 @@ class Net_Vpopmaild {
         }
         $lists = array();
         $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusError($in)) {
+        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
             list($ip, $domain) = explode(' ', $in);
             if (!empty($lists[$ip])) {
                 $lists[$ip].= ", ".$domain;
