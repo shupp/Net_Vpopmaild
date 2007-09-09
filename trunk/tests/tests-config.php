@@ -14,6 +14,14 @@ $domain1 = "test.com";
 $ip2 = "2.3.4.5";
 $domain2 = "test2.com";
 
+// Sample dot qmail file
+$dotQmailFile = array(
+    'Program' => '|/usr/local/autorespond',
+    'Comment' => '# This is a comment',
+    'Forward' => '&someforward@remotehost.com',
+    'Delivery' => '/path/to/Maildir/'
+);
+
 require_once 'Net/Vpopmaild.php';
 $vp = new Net_Vpopmaild;
 $vp->address = $vpopmaildHost;
