@@ -10,7 +10,8 @@
  * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
  * @todo Finish ezmlm functions
  * @todo Do not rely on PHP4 packages
- * @todo Clean up robot error handling
+ * @todo Robot creation - check for existing accounts first?  or 
+ * is it an issue with OS X fs, or vpopmaild?
  * @todo Finish going over documentation
  */
 
@@ -768,13 +769,14 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return mixed PEAR_Error on failure, true on success
+     * @return bool true on success, false on failure
      */
     public function robotDel($domain, $user)
     {
         $result = $this->robotGet($domain, $user);
         if (!is_array($result)) {
-            return $result;
+            $this->recordio($result);
+            return false;
         }
         $robotDir = strtoupper($user);
         $dotQmailName = ".qmail-$user";
@@ -782,16 +784,19 @@ class Net_Vpopmaild {
         // Get domain directory for robotPath
         $domainArray = $this->domainInfo($domain);
         if (PEAR::isError($domainArray)) {
-            return $domainArray;
+            $this->recordio($domainArray->getMessage());
+            return false;
         }
         $robotPath = $domainArray['path']."/$robotDir";
         $result = $this->rmDir($robotPath);
         if (PEAR::isError($result)) {
-            return $result;
+            $this->recordio($result->getMessage());
+            return false;
         }
         $result = $this->RmFile($domain, '', $dotQmailName);
         if (PEAR::isError($result)) {
-            return $result;
+            $this->recordio($result->getMessage());
+            return false;
         }
         return true;
     }
@@ -807,7 +812,7 @@ class Net_Vpopmaild {
      * @param mixed $time 
      * @param mixed $number 
      * @access public
-     * @return mixed true on success, PEAR_Error on failure
+     * @return bool true on success, false on failure
      */
     public function robotSet($domain, $user, $subject, $message, $forward, $time = '', $number = '')
     {
@@ -826,7 +831,8 @@ class Net_Vpopmaild {
         // Get domain directory for robotPath
         $domainArray = $this->domainInfo($domain);
         if (PEAR::isError($domainArray)) {
-            return $domainArray;
+            $this->recordio($domainArray->getMessage());
+            return false;
         }
         $robotPath = $domainArray['path']."/$robotDir";
 
@@ -841,11 +847,13 @@ class Net_Vpopmaild {
         }
         $result = $this->writeFile($dotQmail, $domain, '', $dotQmailName);
         if (PEAR::isError($result)) {
-            return $result;
+            $this->recordio($result->getMessage());
+            return false;
         }
         $result = $this->mkDir($domain, '', $robotDir);
         if (PEAR::isError($result)) {
-            return $result;
+            $this->recordio($result->getMessage());
+            return false;
         }
         #  NOTE:  You have to add them backwards!
         array_unshift($message, "");
@@ -853,7 +861,8 @@ class Net_Vpopmaild {
         array_unshift($message, "From: $user@$domain");
         $result = $this->writeFile($message, $messagePath);
         if (PEAR::isError($result)) {
-            return $result;
+            $this->recordio($result->getMessage());
+            return false;
         }
         return true;
     }
