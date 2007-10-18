@@ -22,6 +22,11 @@ $dotQmailFile = array(
     'Delivery' => '/path/to/Maildir/'
 );
 
+// Sample home .qmail files
+$homeDotQmailFileDelete = array(
+    '# delete',
+);
+
 require_once 'Net/Vpopmaild.php';
 $vp = new Net_Vpopmaild;
 $vp->address = $vpopmaildHost;
