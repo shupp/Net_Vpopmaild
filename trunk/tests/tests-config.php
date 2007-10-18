@@ -3,8 +3,10 @@
 // SETTINGS
 ini_set('include_path', '.:/Users/shupp/pear/lib');
 $vpopmaildHost = 'localhost';
-$logFile = '/tmp/billshupp.log';
-$sysadminEmail = 'test@test.com';
+$logFile = '/tmp/vpopmaild.log';
+$user = 'test';
+$domain = 'test.com';
+$sysadminEmail = $user. '@' . $domain;
 $sysadminPass = 'test';
 $domainCount = 2001;
 // Existing IP map should be EMPTY
@@ -13,6 +15,12 @@ $ip1 = "1.2.3.4";
 $domain1 = "test.com";
 $ip2 = "2.3.4.5";
 $domain2 = "test2.com";
+
+// testing robots
+$robot   = 'robot';
+$subject = 'Test Subject';
+$forward = 'forward@example.com';
+$message = 'out of the office';
 
 // Sample dot qmail file
 $dotQmailFile = array(
