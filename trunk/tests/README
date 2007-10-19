@@ -1,0 +1,7 @@
+Before staring, make sure the contents of tests-config.php
+are correct.
+
+To run these tests, execute:
+
+    pear run-tests
+

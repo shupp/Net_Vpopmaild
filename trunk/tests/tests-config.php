@@ -4,11 +4,16 @@
 ini_set('include_path', '.:/Users/shupp/pear/lib');
 $vpopmaildHost = 'localhost';
 $logFile = '/tmp/vpopmaild.log';
+
+// Sysadmin user info
 $user = 'test';
 $domain = 'test.com';
 $sysadminEmail = $user. '@' . $domain;
 $sysadminPass = 'test';
+
+// Total number of domains which domainCount will return
 $domainCount = 2001;
+
 // Existing IP map should be EMPTY
 // Domains test.com and test2.com need to exist
 $ip1 = "1.2.3.4";
@@ -35,6 +40,8 @@ $homeDotQmailFileDelete = array(
     '# delete',
 );
 
+
+// Init for tests
 require_once 'Net/Vpopmaild.php';
 $vp = new Net_Vpopmaild;
 $vp->address = $vpopmaildHost;
