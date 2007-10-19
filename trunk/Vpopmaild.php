@@ -920,7 +920,7 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param string $user 
      * @access public
-     * @return mixed lists array on success, error string on failure
+     * @return array lists array on success, error on failure
      */
     public function listLists($domain, $user = '')
     {
@@ -928,7 +928,8 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("list_lists $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            $this->recordio($status);
+            return false;
         }
         $lists = array();
         $in = $this->sockRead();
