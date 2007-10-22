@@ -13,6 +13,7 @@
  * @todo Robot creation - check for existing accounts first?  or 
  * is it an issue with OS X fs, or vpopmaild?
  * @todo Finish going over documentation
+ * @todo Coordinate error handling with vpopmaild error numbers
  */
 
 /**
@@ -992,10 +993,14 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
+     * @throws Net_Vpopmaild_Exception
      * @return mixed void on success, error string on failure
      */
     public function writeFile($contents, $domain, $user = '', $path = '')
     {
+        if (!is_array($contents)) {
+            throw new Net_Vpopmaild_Exception('$contents argument must be an array');
+        }
         $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("write_file $basePath");
         reset($contents);
@@ -1016,21 +1021,15 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @return mixed file contents as array on success, error string on failure
+     * @return mixed file contents as array on success, false on failure
      */
     public function readFile($domain, $user = '', $path = '')
     {
-        $basePath = $domain;
-        if (!empty($user)) {
-            $basePath  = "$user@$basePath";
-        }
-        if (!empty($path)) {
-            $basePath .= "/".$path;
-        }
+        $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("read_file $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
         $fileContents = array();
         $in = $this->sockRead();
