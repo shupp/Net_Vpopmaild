@@ -27,6 +27,9 @@ $subject = 'Test Subject';
 $forward = 'forward@example.com';
 $message = 'out of the office';
 
+$testFile = 'TESTFILE';
+$testFileContents = array('CONTENTS');
+
 // Sample dot qmail file
 $dotQmailFile = array(
     'Program' => '|/usr/local/autorespond',
