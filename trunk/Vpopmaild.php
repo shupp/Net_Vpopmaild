@@ -1095,7 +1095,7 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @return mixed true on success, error string on failure
      */
     public function mkDir($domain, $user = '', $path = '')
     {
@@ -1105,6 +1105,7 @@ class Net_Vpopmaild {
         if (!$this->statusOk($status)) {
             return $status;
         }
+        return true;
     }
 
     /**
