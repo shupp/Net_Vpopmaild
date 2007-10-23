@@ -1064,7 +1064,8 @@ class Net_Vpopmaild {
             $directoryContents[$dirName] = $type;
             $in = $this->sockRead();
         }
-        return ksort($directoryContents);
+        ksort($directoryContents);
+        return $directoryContents;
     }
     /**
      * rmDir 
@@ -1093,10 +1094,10 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param string $user 
      * @param string $path 
-     * @access private
+     * @access public
      * @return mixed void on success, error string on failure
      */
-    private function mkDir($domain, $user = '', $path = '')
+    public function mkDir($domain, $user = '', $path = '')
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
         $status = $this->sockWrite("mk_dir $basePath");
