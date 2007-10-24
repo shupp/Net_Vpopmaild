@@ -12,7 +12,7 @@ $sysadminEmail = $user. '@' . $domain;
 $sysadminPass = 'test';
 
 // Total number of domains which domainCount will return
-$domainCount = 2001;
+$domainCount = 2501;
 
 // Existing IP map should be EMPTY
 // Domains test.com and test2.com need to exist
