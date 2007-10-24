@@ -712,7 +712,8 @@ class Net_Vpopmaild {
         $infoArray = array();
         $in = $this->sockRead();
         while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
-            if ('' != $in) {
+            $this->recordio("<<--  Start readInfo  -->>");
+            if ($in != '') {
                 unset($value);
                 list($name, $value) = explode(' ', $in, 2);
                 $value = trim($value);
@@ -1113,15 +1114,17 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return mixed array limits on success, error string on failure
+     * @return mixed array limits on success, false on failure
      */
     public function getLimits($domain)
     {
         $status = $this->sockWrite("get_limits $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        $this->recordio('balls');
+        $status = $this->sockRead();
         $limits = $this->readInfo();
         return $limits;
     }
@@ -1132,7 +1135,7 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $limits 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @return mixed true on success, false on failure
      */
     public function setLimits($domain, $limits)
     {
@@ -1168,15 +1171,19 @@ class Net_Vpopmaild {
                                 'perm_defaultquota');
 
         $status = $this->sockWrite("set_limits $domain");
+        $status = $this->sockRead();
+        if (!$this->statusOk($status)) {
+            return false;
+        }
         // string parms
-        while (list(, $name) = each($stringParms)) {
+        foreach ($stringParms as $name) {
             if (!empty($limits[$name])) {
                 $value = $limits[$name];
                 $status = $this->sockWrite("$name $value");
             }
         }
         // flag parms
-        while (list(, $name) = each($flagParms)) {
+        foreach ($flagParms as $name) {
             if (!empty($limits[$name])) {
                 $value = $limits[$name];
                 $status = $this->sockWrite("$name $value");
@@ -1185,7 +1192,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite(".");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
         return true;
     }
@@ -1195,15 +1202,16 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return mixed void, errors string on failure
+     * @return mixed true on success, false on failure
      */
     public function delLimits($domain)
     {
         $status = $this->sockWrite("del_limits $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
 
     /**
