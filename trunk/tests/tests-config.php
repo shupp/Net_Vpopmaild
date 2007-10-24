@@ -21,6 +21,8 @@ $domain1 = "test.com";
 $ip2 = "2.3.4.5";
 $domain2 = "test2.com";
 
+$nonExistantDomain = 'nonexistantdomain.com';
+
 // testing robots
 $robot   = 'robot';
 $subject = 'Test Subject';

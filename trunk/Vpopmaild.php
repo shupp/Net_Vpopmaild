@@ -1283,15 +1283,16 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $password 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @return mixed true on success, false
      */
     public function addDomain($domain, $password)
     {
         $status = $this->sockWrite("add_domain $domain $password");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
 
     /**
