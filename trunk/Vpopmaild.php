@@ -1301,30 +1301,32 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $alias 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @return mixed true on success, false on failure
      */
     public function addAliasDomain($domain, $alias)
     {
         $status = $this->sockWrite("add_alias_domain $domain $alias");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
     /**
      * delDomain 
      * 
      * @param mixed $domain 
      * @access public
-     * @return mixed error string on failure, void on success
+     * @return mixed true on success, false on failure
      */
     public function delDomain($domain)
     {
         $status = $this->sockWrite("del_domain $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
 
     /**
