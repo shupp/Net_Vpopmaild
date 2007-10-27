@@ -11,7 +11,7 @@ try {
 $vp->setDebug();
 $vp->clogin($sysadminEmail, $sysadminPass);
 
-$result = $vp->addDomain($nonExistantDomain, $sysadminPass);
+$result = $vp->addDomain($nonExistentDomain, $sysadminPass);
 var_dump($result);
 ?>
 --EXPECT--
