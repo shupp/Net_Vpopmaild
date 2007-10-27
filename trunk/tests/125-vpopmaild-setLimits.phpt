@@ -8,7 +8,6 @@ try {
 } catch (Net_Vpopmaild_Exception $e) {
     echo "Error connecting to vpopmaild\n";
 }
-$vp->setDebug();
 $vp->clogin($sysadminEmail, $sysadminPass);
 
 $result = $vp->setLimits($domain, array('disable_pop' => 1));

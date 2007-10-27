@@ -53,5 +53,6 @@ $vp = new Net_Vpopmaild;
 $vp->address = $vpopmaildHost;
 $vp->timeout = 5;
 $vp->logFile = $logFile;
+$vp->setDebug();
 
 ?>

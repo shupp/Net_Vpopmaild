@@ -8,7 +8,6 @@ try {
 } catch (Net_Vpopmaild_Exception $e) {
     echo "Error connecting to vpopmaild\n";
 }
-$vp->setDebug();
 $vp->clogin($sysadminEmail, $sysadminPass);
 
 $count = $vp->domainCount();
