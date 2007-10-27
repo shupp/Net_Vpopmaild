@@ -49,6 +49,10 @@ $homeDotQmailFileDelete = array(
     '# delete',
 );
 
+// Vacation
+$vacationSubject = 'On Vcation';
+$vacationMessage = 'Do Not Bother Me!';
+
 
 // Init for tests
 require_once 'Net/Vpopmaild.php';

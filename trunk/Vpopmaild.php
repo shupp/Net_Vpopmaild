@@ -418,7 +418,7 @@ class Net_Vpopmaild {
      * Write $data to socket
      * 
      * @param mixed $data 
-     * @access protected
+     * @access private
      * @return mixed
      * @throws Net_Vpopmaild_Exception if Net_Socket::writeLine() returns PEAR_Error
      */
@@ -437,7 +437,7 @@ class Net_Vpopmaild {
      * 
      * Read line from socket
      * 
-     * @access protected
+     * @access private
      * @return string line
      * @throws Net_Vpopmaild_Exception if Net_Socket::readLine() returns PEAR_Error
      */
@@ -662,7 +662,7 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @param string $type 
-     * @access protected
+     * @access private
      * @return var $basePath
      */
     protected function formatBasePath($domain, $user = '', $path = '', $type = 'file')
@@ -686,7 +686,7 @@ class Net_Vpopmaild {
      * Collect user/dom info into an Array and return.
      * NOTE:  +OK has already been read.
      * 
-     * @access protected
+     * @access private
      * @return mixed info array
      */
     protected function readInfo()
@@ -1083,7 +1083,7 @@ class Net_Vpopmaild {
      */
     public function mkDir($domain, $user = '', $path = '')
     {
-        $basePath = $this->formatBasePath($domain, $user, $path);
+        $basePath = $this->formatBasePath($domain, $user, $path, 'dir');
         $status = $this->sockWrite("mk_dir $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
@@ -1700,9 +1700,9 @@ class Net_Vpopmaild {
      * @param string $line 
      * @param mixed $user_info 
      * @access public
-     * @return mixed vacation array on success, error string on failure
+     * @return mixed vacation array on success, null on failure
      */
-    function getVacation($line = '', $user_info) {
+    public function getVacation($line = '', $user_info) {
         if ($line == '') {
             $path = $user_info['user_dir'].'/vacation/message';
         } else {
@@ -1712,7 +1712,7 @@ class Net_Vpopmaild {
         }
         $contents = $this->readFile($path);
         if (!is_array($contents)) {
-            return $contents;
+            return null;
         }
         array_shift($contents); #   Eat From: address
         $subject = substr(array_shift($contents), 9);
@@ -1722,30 +1722,26 @@ class Net_Vpopmaild {
                         'vacation' => ' checked');
     }
     /**
-     * setupVacation
-     *
-     * @param mixed $user
-     * @param mixed $domain
-     * @param mixed $subject
-     * @param mixed $message
-     * @param string $acct_info
+     * setVacation 
+     * 
+     * @param mixed $user 
+     * @param mixed $domain 
+     * @param mixed $subject 
+     * @param mixed $message 
+     * @param string $vacationDir = 'vacation'
      * @access public
      * @return void
      */
-    function setupVacation($user, $domain, $subject, $message, $acct_info = '')
+    function setVacation($user, $domain, $subject, $message, $vacationDir = 'vacation')
     {
-        if ($acct_info == '') {
-            global $user_info;
-            $acct_info = $user_info;
-        }
-        $vacation_dir = $user_info['user_dir'].'/vacation';
-        $message_file = $dir.'/message';
-        $contents = "From: $user@$domain\n";
-        $contents.= "Subject: $subject\n\n";
-        $contents.= "$message\n";
-        $this->rmDir($domain, $user, $vacation_dir);
-        $this->mkDir($vacation_dir);
-        $this->writeFile($contents, $domain, $user, $message_file);
+        $messageFile = $vacationDir . '/message';
+        $contents = array( "From: $user@$domain",
+                            "Subject: $subject",
+                            '',
+                            $message);
+        $this->rmDir($domain, $user, $vacationDir);
+        $this->mkDir($domain, $user, $vacationDir);
+        $this->writeFile($contents, $domain, $user, $messageFile);
     }
 
     /**
