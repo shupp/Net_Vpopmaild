@@ -1337,20 +1337,24 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $perPage 
      * @access public
-     * @return mixed int page on success, error string on failure
+     * @return int page number on success, null on on failure
      */
-    public function findDomain($domain, $perPage)
+    public function findDomain($domain, $perPage = null)
     {
-        $status = $this->sockWrite("find_domain $domain $perPage");
+        if (is_null($perPage)) {
+            $status = $this->sockWrite("find_domain $domain");
+        } else {
+            $status = $this->sockWrite("find_domain $domain $perPage");
+        }
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return null;
         }
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
-            list(, $page) = explode(' ', $in, 2);
-            $in = $this->sockRead();
+        $in = $this->readInfo();
+        if (empty($in) || !array_key_exists('page', $in)) {
+            return null;
         }
-        return $page;
+        return $in['page'];
     }
 
     /**
