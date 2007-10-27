@@ -1339,13 +1339,9 @@ class Net_Vpopmaild {
      * @access public
      * @return int page number on success, null on on failure
      */
-    public function findDomain($domain, $perPage = null)
+    public function findDomain($domain, $perPage = 0)
     {
-        if (is_null($perPage)) {
-            $status = $this->sockWrite("find_domain $domain");
-        } else {
-            $status = $this->sockWrite("find_domain $domain $perPage");
-        }
+        $status = $this->sockWrite("find_domain $domain $perPage");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
             return null;
@@ -1479,21 +1475,24 @@ class Net_Vpopmaild {
      * @param int $page 
      * @param int $perPage 
      * @access public
-     * @return mixed users array on success, error string on failure
+     * @return mixed users array on success, null on failure
      */
     public function listUsers($domain, $page = 0, $perPage = 0)
     {
         $status = $this->sockWrite("list_users $domain $page $perPage");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return null;
         }
-        $i = 0;
-        $currentName = '';
+
         $list = array();
         $this->recordio("<<--  Start collecting user data  -->>");
         $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in) && $i < 10) {
+        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+            if (empty($in)) {
+                $in = $this->sockRead();
+                continue;
+            }
             list($name, $value) = explode(' ', $in, 2);
             if ('name' == $name) {
                 if (!empty($currentName)) {

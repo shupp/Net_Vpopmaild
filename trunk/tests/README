@@ -1,7 +1,10 @@
 Before staring, make sure the contents of tests-config.php
 are correct.
 
-To run these tests, execute:
+To run all tests, execute:
 
     pear run-tests
 
+To run selected tests, execte:
+
+    pear run-tests <filename> [<filename>] ...
