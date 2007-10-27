@@ -8,12 +8,13 @@
  * @author Bill Shupp <hostmaster@shupp.org> 
  * @author Rick Widmer
  * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @todo Finish ezmlm functions
+ * @todo Finish ezmlm functions, waiting on vpopmaild updates
  * @todo Do not rely on PHP4 packages
  * @todo Robot creation - check for existing accounts first?  or 
  * is it an issue with OS X fs, or vpopmaild?
  * @todo Finish going over documentation
  * @todo Coordinate error handling with vpopmaild error numbers
+ * @todo allow redaInfo() to support mutlitple items/arrays for listUsers()
  */
 
 /**
@@ -1532,43 +1533,21 @@ class Net_Vpopmaild {
     }
 
     /**
-     * getLastAuthIP 
-     * 
-     * Implements get_lastauthip.  The result of this should be run through 
-     * Net_IPv4::validateIP() or Net_IPv6::checkIPv6()
-     * 
-     * @param mixed $domain 
-     * @param mixed $user 
-     * @access public
-     * @return return string IP on success, string error on failure
-     */
-    public function getLastAuthIP($domain, $user)
-    {
-        $status = $this->sockWrite("get_lastauthip $user@$domain");
-        $status = $this->sockRead();
-        if (!$this->statusOk($status)) {
-            return $status;
-        }
-        $in = $this->sockRead();
-        return $in;
-    }
-
-    /**
      * getLastAuth 
      * 
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return string time
+     * @return false on failure, array('time' => (timestamp), 'ip' => IP (0.0.0.0 for none))
      */
     public function getLastAuth($domain, $user)
     {
         $status = $this->sockWrite("get_lastauth $user@$domain");
         $status = $this->sockRead();
-        // if (!$this->statusOk($status)) {
-            // return PEAR::raiseError($status);
-        // }
-        $in = $this->sockRead();
+        if (!$this->statusOk($status)) {
+            return false;
+        }
+        $in = $this->readInfo();
         return $in;
     }
 
