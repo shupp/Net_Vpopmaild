@@ -477,10 +477,10 @@ class Net_Vpopmaild {
      * Called by {@link __destruct()}
      * 
      * 
-     * @access protected
+     * @access public
      * @return void
      */
-    protected function quit()
+    public function quit()
     {
         $this->sockWrite("quit\n");
     }
@@ -1599,34 +1599,37 @@ class Net_Vpopmaild {
         if ($acct_info == '') {
             $acct_info = $this->loginUser;
         }
-        if ($this->isSysAdmin()) {
+        if ($this->isSysAdmin($acct_info)) {
             return true;
         }
         if ($this->getGidBit($acct_info['gidflags'], 'domain_admin_privileges')) {
             return true;
         }
-        if (($acct_info['user'] == 'postmaster') && $domain == $acct_info['domain']) {
+        if (($acct_info['name'] == 'postmaster') && $domain == $acct_info['domain']) {
             return true;
         }
         return false;
     }
 
     /**
-     * Is User Admin
-     *
-     * Determin if this user have privileges on this account
-     *
-     * @author Bill Shupp <hostmaster@shupp.org>
-     *
+     * isUserAdmin 
+     * 
+     * Determin if this user have privileges on this account.
+     * Will not work if you did not authenticate using authenticate(),
+     * as it relies on $this->loginUser['domain'] to be set.
+     * 
+     * @param mixed $name 
+     * @param mixed $domain 
+     * @access public
+     * @return void
+     * @see authenticate()
      */
-    function isUserAdmin($account, $domain) {
+    function isUserAdmin($name, $domain) {
         if ($this->isDomainAdmin($domain)) {
             return true;
         }
-        if (($this->loginUser['name'] == $account) && ($this->loginUser['domain'] == $domain)) {
-            return true;
-        }
-        return false;
+        return (($this->loginUser['name'] == $name) 
+                && ($this->loginUser['domain'] == $domain));
     }
 
     /**
