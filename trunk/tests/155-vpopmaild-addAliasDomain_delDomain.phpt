@@ -1,5 +1,5 @@
 --TEST--
-Net_Vpopmaild::addAliasDomain()
+Net_Vpopmaild::addAliasDomain(), Net_Vpopmaild::delDomain()
 --FILE--
 <?php
 require_once('tests-config.php');
