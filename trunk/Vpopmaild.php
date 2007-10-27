@@ -452,26 +452,6 @@ class Net_Vpopmaild {
     }
 
     /**
-     * rawSockRead 
-     * 
-     * Leftover from vpopmaild.pobj.  Currently not used.
-     * 
-     * @param int $maxLen 
-     * @access protected
-     * @return mixed
-     * @throws Net_Vpopmaild_Exception if Net_Socket::read() returns PEAR_Error
-     */
-    protected function rawSockRead($maxLen = 2048)
-    {
-        $in = $this->socket->read($maxLen);
-        if (PEAR::isError($in)) {
-            throw new Net_Vpopmaild_Exception($in);
-        }
-        $this->recordio("rawSockRead Read: $in");
-        return $in = trim($in);
-    }
-
-    /**
      * quit 
      * 
      * send quit command to vpopmaild.
