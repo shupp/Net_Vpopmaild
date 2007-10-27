@@ -15,6 +15,7 @@
  * @todo Finish going over documentation
  * @todo Coordinate error handling with vpopmaild error numbers
  * @todo allow redaInfo() to support mutlitple items/arrays for listUsers()
+ * @todo getQuota() should support maildir++ completely (file count: C)
  */
 
 /**
