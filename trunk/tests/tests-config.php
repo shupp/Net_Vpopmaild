@@ -14,6 +14,9 @@ $sysadminPass = 'test';
 // Total number of domains which domainCount will return
 $domainCount = 2501;
 
+// Total number of users in $domain which domainCount will return
+$userCount = 2;
+
 // Existing IP map should be EMPTY
 // Domains test.com and test2.com need to exist
 $ip1 = "1.2.3.4";

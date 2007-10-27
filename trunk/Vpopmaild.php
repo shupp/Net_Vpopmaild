@@ -1261,7 +1261,7 @@ class Net_Vpopmaild {
      * domainCount 
      * 
      * @access public
-     * @return mixed int on success, error string on failure
+     * @return int count on success, false on failure
      */
     public function domainCount()
     {
@@ -1270,12 +1270,11 @@ class Net_Vpopmaild {
         if (!$this->statusOk($status)) {
             return $status;
         }
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
-            list(, $count) = explode(' ', $in, 2);
-            $in = $this->sockRead();
+        $in = $this->readInfo();
+        if (array_key_exists('count', $in)) {
+            return $in['count'];
         }
-        return $count;
+        return false;
     }
     /**
      * addDomain 
@@ -1516,21 +1515,20 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return int count on success, error string on failure
+     * @return int count on success, false on failure
      */
     public function userCount($domain)
     {
         $status = $this->sockWrite("user_count $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $in;
+            return false;
         }
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
-            list(, $count) = explode(' ', $in, 2);
-            $in = $this->sockRead();
+        $in = $this->readInfo();
+        if (array_key_exists('count', $in)) {
+            return $in['count'];
         }
-        return $count;
+        return false;
     }
 
     /**
