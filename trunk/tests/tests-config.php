@@ -1,7 +1,7 @@
 <?php
 
 // SETTINGS
-ini_set('include_path', '.:/Users/shupp/pear/lib');
+require_once 'tests-setpath.php';
 $vpopmaildHost = 'localhost';
 $logFile = '/tmp/vpopmaild.log';
 
@@ -52,7 +52,8 @@ $homeDotQmailFileDelete = array(
 
 // Init for tests
 require_once 'Net/Vpopmaild.php';
-$vp = new Net_Vpopmaild;
+$class = isset($class) ? $class : 'Net_Vpopmaild';
+$vp = new $class;
 $vp->address = $vpopmaildHost;
 $vp->timeout = 5;
 $vp->logFile = $logFile;
