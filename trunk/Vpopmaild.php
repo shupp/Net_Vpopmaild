@@ -1364,15 +1364,16 @@ class Net_Vpopmaild {
      * @param mixed $user 
      * @param mixed $password 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @return mixed true on success, false on failure
      */
     public function addUser($domain, $user, $password)
     {
         $status = $this->sockWrite("add_user $user@$domain $password");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
 
     /**
@@ -1381,15 +1382,16 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return void on success, error string on failure
+     * @return true on success, false on failure
      */
     public function delUser($domain, $user)
     {
         $status = $this->sockWrite("del_user $user@$domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
 
 
@@ -1400,12 +1402,10 @@ class Net_Vpopmaild {
      * @param mixed $user 
      * @param mixed $userInfo 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @return mixed true success, false on failure
      */
     public function modUser($domain, $user, $userInfo)
     {
-        #  NOTE:  If you want your users to be able to change passwords
-        #         from ModUser, you must un-comment the name below.
         static $stringParms = array(   'quota',
                                 'comment',
                                 'clear_text_password');
@@ -1431,13 +1431,17 @@ class Net_Vpopmaild {
                                 'delete_spam',);
 
         $status = $this->sockWrite("mod_user $user@$domain");
-        while (list(, $name) = each($stringParms)) {
+        $status = $this->sockRead();
+        if (!$this->statusOk($status)) {
+            return false;
+        }
+        foreach ($stringParms as $name) {
             if (!empty($userInfo[$name])) {
                 $value = $userInfo[$name];
                 $status = $this->sockWrite("$name $value");
             }
         }
-        while (list(, $name) = each($flagParms)) {
+        foreach ($flagParms as $name) {
             $flip = false;
             $value = $this->getGidBit($userInfo['gidflags'], $name, $flip);
             $value = ($value) ? '1' : '0';
@@ -1446,8 +1450,9 @@ class Net_Vpopmaild {
         $status = $this->sockWrite(".");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return false;
         }
+        return true;
     }
     /**
      * userInfo 
