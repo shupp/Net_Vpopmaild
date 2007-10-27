@@ -230,6 +230,7 @@ class Net_Vpopmaild {
      * set to true only when connected.  This is used only by __destruct()
      * 
      * @var bool
+     * @see __destruct()
      * @access private
      */
     private $connected = false;
@@ -417,11 +418,11 @@ class Net_Vpopmaild {
      * Write $data to socket
      * 
      * @param mixed $data 
-     * @access private
+     * @access protected
      * @return mixed
      * @throws Net_Vpopmaild_Exception if Net_Socket::writeLine() returns PEAR_Error
      */
-    private function sockWrite($data)
+    protected function sockWrite($data)
     {
         $this->recordio("sockWrite send: $data");
         $result = $this->socket->writeLine($data);
@@ -436,11 +437,11 @@ class Net_Vpopmaild {
      * 
      * Read line from socket
      * 
-     * @access private
+     * @access protected
      * @return string line
      * @throws Net_Vpopmaild_Exception if Net_Socket::readLine() returns PEAR_Error
      */
-    private function sockRead()
+    protected function sockRead()
     {
         $in = $this->socket->readLine();
         $this->recordio("sockRead Read: $in");
@@ -456,11 +457,11 @@ class Net_Vpopmaild {
      * Leftover from vpopmaild.pobj.  Currently not used.
      * 
      * @param int $maxLen 
-     * @access private
+     * @access protected
      * @return mixed
      * @throws Net_Vpopmaild_Exception if Net_Socket::read() returns PEAR_Error
      */
-    private function rawSockRead($maxLen = 2048)
+    protected function rawSockRead($maxLen = 2048)
     {
         $in = $this->socket->read($maxLen);
         if (PEAR::isError($in)) {
@@ -681,10 +682,10 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @param string $type 
-     * @access private
+     * @access protected
      * @return var $basePath
      */
-    private function formatBasePath($domain, $user = '', $path = '', $type = 'file')
+    protected function formatBasePath($domain, $user = '', $path = '', $type = 'file')
     {
         $basePath = $domain;
         if (!empty($user)) {
@@ -705,10 +706,10 @@ class Net_Vpopmaild {
      * Collect user/dom info into an Array and return.
      * NOTE:  +OK has already been read.
      * 
-     * @access private
+     * @access protected
      * @return mixed info array
      */
-    private function readInfo()
+    protected function readInfo()
     {
         $this->recordio("<<--  Start readInfo  -->>");
         $infoArray = array();
