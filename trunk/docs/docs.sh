@@ -14,7 +14,14 @@ if [ -z $1 ] ; then
     exit
 fi
 
-DOCSDIR=$0
+# make sure Vpopmaild.php is available
+if [ ! -f 'Vpopmaild.php' ] ; then
+    echo "Error: Vpopmaild.php is not in your current directory"
+    usage
+    exit
+fi
+
+DOCSDIR=$1
 
 phpdoc \
     -s on \
