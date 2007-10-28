@@ -89,10 +89,10 @@ class Net_Vpopmaild {
      * Set to 1 to enable logging.  Can be set by {@link setDebug()}
      * 
      * @var mixed
-     * @access public
+     * @access private
      * @see function setDebug
      */
-    public $debug = 0;
+    protected $debug = 0;
     /**
      * loginUser 
      * 
@@ -126,9 +126,9 @@ class Net_Vpopmaild {
      * gid big values for account limits
      * 
      * @var array
-     * @access public
+     * @access private
      */
-    public $gidFlagValues = array(
+    protected $gidFlagValues = array(
         'no_password_change'        => 0x01, 
         'no_pop'                    => 0x02, 
         'no_webmail'                => 0x04, 
@@ -150,32 +150,32 @@ class Net_Vpopmaild {
         'no_maildrop'               => 0x40000);
 
     /**
-     * vpopmail_robot_program 
+     * vpopmailRobotProgram 
      * 
      * path to autorespond
      * 
      * @var string
      * @access public
      */
-    public $vpopmail_robot_program = '/usr/bin/autorespond';
+    public $vpopmailRobotProgram = '/usr/bin/autorespond';
     /**
-     * vpopmail_robot_time 
+     * vpopmailRobotTime 
      * 
      * autorespond time argument
      * 
      * @var int
      * @access public
      */
-    public $vpopmail_robot_time = 1000;
+    public $vpopmailRobotTime = 1000;
     /**
-     * vpopmail_robot_number 
+     * vpopmailRobotNumber 
      * 
      * autorespond number argument
      * 
      * @var int
      * @access public
      */
-    public $vpopmail_robot_number = 3;
+    public $vpopmailRobotNumber = 3;
 
     /**
      * ezmlmOpts 
@@ -184,9 +184,9 @@ class Net_Vpopmaild {
      * line options. Use 1 for "on" or "yes"
      * 
      * @var mixed
-     * @access public
+     * @access private
      */
-    public $ezmlmOpts = array(
+    protected $ezmlmOpts = array(
             'a' => 1, /* Archive */
             'b' => 1, /* Moderator-only access to archive */
             'c' => 0, /* ignored */
@@ -272,7 +272,7 @@ class Net_Vpopmaild {
     }
 
     /**
-     * accept 
+     * acceptLog
      * 
      * Assign {@link $log} an external instance of Log
      * 
@@ -280,7 +280,7 @@ class Net_Vpopmaild {
      * @access public
      * @return void
      */
-    public function accept(&$log)
+    public function acceptLog(&$log)
     {
         if ($log instanceof Log) {
             $this->log = & $log;
@@ -332,10 +332,10 @@ class Net_Vpopmaild {
      *  $data contains +OK
      * 
      * @param string $data 
-     * @access public
+     * @access private
      * @return bool
      */
-    public function statusOk($data)
+    protected function statusOk($data)
     {
         if (preg_match('/^[+]OK/', $data)) {
             return true;
@@ -350,10 +350,10 @@ class Net_Vpopmaild {
      *  (more to come)
      * 
      * @param string $data 
-     * @access public
+     * @access private
      * @return bool
      */
-    public function statusOkMore($data)
+    protected function statusOkMore($data)
     {
         if (preg_match('/^[+]OK[+]$/', $data)) {
             return true;
@@ -367,10 +367,10 @@ class Net_Vpopmaild {
      * $data is exactly +OK
      * 
      * @param string $data 
-     * @access public
+     * @access private
      * @return bool
      */
-    public function statusOkNoMore($data)
+    protected function statusOkNoMore($data)
     {
         if (preg_match('/^[+]OK$/', $data)) {
             return true;
@@ -384,10 +384,10 @@ class Net_Vpopmaild {
      * $data starts with "-ERR "
      * 
      * @param string $data 
-     * @access public
+     * @access private
      * @return bool
      */
-    public function statusErr($data)
+    protected function statusErr($data)
     {
         if (preg_match('/^[-]ERR /', $data)) {
             return true;
@@ -401,10 +401,10 @@ class Net_Vpopmaild {
      * $data is exactly "."
      * 
      * @param string $data 
-     * @access public
+     * @access private
      * @return bool
      */
-    public function dotOnly($data)
+    protected function dotOnly($data)
     {
         if (preg_match('/^[.]$/', $data)) {
             return true;
@@ -474,7 +474,7 @@ class Net_Vpopmaild {
      * @access public
      * @return void
      */
-    public function __destruct()
+    protected function __destruct()
     {
         if ($this->connected) {
             $this->quit();
@@ -802,10 +802,10 @@ class Net_Vpopmaild {
     public function robotSet($domain, $user, $subject, $message, $forward, $time = '', $number = '')
     {
         if ($time == '') {
-            $time = $this->vpopmail_robot_time;
+            $time = $this->vpopmailRobotTime;
         }
         if ($number == '') {
-            $number = $this->vpopmail_robot_number;
+            $number = $this->vpopmailRobotNumber;
         }
         $robotDir = strtoupper($user);
         $dotQmailName = ".qmail-$user";
@@ -822,7 +822,7 @@ class Net_Vpopmaild {
         $robotPath = $domainArray['path']."/$robotDir";
 
         $messagePath = "$robotPath/message";
-        $program = $this->vpopmail_robot_program;
+        $program = $this->vpopmailRobotProgram;
         #  Build the dot qmail file
         $dotQmail = array("|$program $time $number $messagePath $robotPath");
         if (is_array($forward)) {
@@ -873,7 +873,7 @@ class Net_Vpopmaild {
         if (count($dotQmail['Program']) > 1)  { #  Too many programs
             return 'ERR - too many programs in robot dotqmail file';
         }
-        if (!preg_match("({$this->vpopmail_robot_program})", $dotQmail['Program'][0])) {
+        if (!preg_match("({$this->vpopmailRobotProgram})", $dotQmail['Program'][0])) {
             return 'ERR - Mail Robot program not found';
         }
         list($Program, $Time, $Number, $MessageFile, $RobotPath) = explode(' ', $dotQmail['Program'][0]);
@@ -1670,7 +1670,7 @@ class Net_Vpopmaild {
                     $defaults['save_a_copy_checked'] = ' checked';
                     continue;
                 }
-                if (preg_match("({$this->vpopmail_robot_program})", $val)) {
+                if (preg_match("({$this->vpopmailRobotProgram})", $val)) {
                     $vacation_array = $this->getVacation($val, $account_info);
                     while (list($vacKey, $vacVal) = each($vacation_array)) {
                         $defaults[$vacKey] = $vacVal;
@@ -1844,7 +1844,7 @@ class Net_Vpopmaild {
         foreach ($raw_array as $parentkey => $parentval) {
             $is_type = 'forwards';
             foreach ($parentval as $key => $val) {
-                if (preg_match('([|].*' . $this->vpopmail_robot_program . ')', $val)) {
+                if (preg_match('([|].*' . $this->vpopmailRobotProgram . ')', $val)) {
                     $is_type = 'responders';
                     break;
                 }
