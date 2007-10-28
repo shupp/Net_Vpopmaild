@@ -1694,7 +1694,7 @@ class Net_Vpopmaild {
     /**
      * Get Vacaation Message Contents
      *
-     * Parse use .qmail line contents to get message subject and meessage body
+     * Parse .qmail line contents to get message subject and meessage body
      *
      * @author Bill Shupp <hostmaster@shupp.org>
      * @param string $line 
@@ -1732,7 +1732,7 @@ class Net_Vpopmaild {
      * @access public
      * @return void
      */
-    function setVacation($user, $domain, $subject, $message, $vacationDir = 'vacation')
+    public function setVacation($user, $domain, $subject, $message, $vacationDir = 'vacation')
     {
         $messageFile = $vacationDir . '/message';
         $contents = array( "From: $user@$domain",
@@ -1745,13 +1745,27 @@ class Net_Vpopmaild {
     }
 
     /**
+     * delVacation 
+     * 
+     * @param mixed $user 
+     * @param mixed $domain 
+     * @param string $vacationDir 
+     * @access public
+     * @return true on success, false on failure
+     */
+    public function delVacation($user, $domain, $vacationDir = 'vacation')
+    {
+        return $this->rmDir($domain, $user, $vacationDir);
+    }
+
+    /**
      * getAliasContents 
      * 
      * @param mixed $contentsArray 
      * @access public
      * @return string
      */
-    function getAliasContents($contentsArray) {
+    public function getAliasContents($contentsArray) {
         $count = 0;
         $string = '';
         while (list($key, $val) = each($contentsArray)) {
