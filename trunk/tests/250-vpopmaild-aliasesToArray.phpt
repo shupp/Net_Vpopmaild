@@ -22,7 +22,6 @@ try {
     echo $e->getMessage();
 }
 
-// clogin uses readInfo to populate $this->loginUser
 $vp->clogin($sysadminEmail, $sysadminPass);
 $array[] = "$alias $aliasDestination1";
 $array[] = "$alias $aliasDestination2";

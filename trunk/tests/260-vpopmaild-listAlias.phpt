@@ -10,7 +10,6 @@ try {
     echo $e->getMessage();
 }
 
-// clogin uses readInfo to populate $this->loginUser
 $vp->clogin($sysadminEmail, $sysadminPass);
 $vp->deleteAlias($alias);
 $vp->addAlias($alias, $aliasDestination1);

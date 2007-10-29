@@ -22,7 +22,6 @@ try {
     echo $e->getMessage();
 }
 
-// clogin uses readInfo to populate $this->loginUser
 $vp->clogin($sysadminEmail, $sysadminPass);
 var_dump($vp->test($domain, $user, '', 'file') == "$user@$domain");
 var_dump($vp->test($domain, $user, 'test', 'file') == "$user@$domain/test");

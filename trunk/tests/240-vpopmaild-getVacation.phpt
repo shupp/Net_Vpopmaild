@@ -10,7 +10,6 @@ try {
     echo $e->getMessage();
 }
 
-// clogin uses readInfo to populate $this->loginUser
 $vp->clogin($sysadminEmail, $sysadminPass);
 $vp->setVacation($user, $domain, $vacationSubject, $vacationMessage);
 $vacation = $vp->getVacation('', $vp->loginUser);
