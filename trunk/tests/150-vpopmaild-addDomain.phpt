@@ -10,8 +10,10 @@ try {
 }
 $vp->clogin($sysadminEmail, $sysadminPass);
 
+$vp->delDomain($nonExistentDomain);
 $result = $vp->addDomain($nonExistentDomain, $sysadminPass);
 var_dump($result);
+$vp->delDomain($nonExistentDomain);
 ?>
 --EXPECT--
 bool(true)

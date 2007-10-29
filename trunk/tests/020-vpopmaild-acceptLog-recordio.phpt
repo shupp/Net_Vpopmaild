@@ -1,5 +1,5 @@
 --TEST--
-Net_Vpopmaild::accept(), recordio()
+Net_Vpopmaild::acceptLog(), recordio()
 --FILE--
 <?php
 require_once('tests-config.php');
@@ -12,7 +12,7 @@ class TestLog extends Log
 {
 }
 $testLog = TestLog::factory('file', $vp->logFile);
-$vp->accept($testLog);
+$vp->acceptLog($testLog);
 // Turn on debugging
 $vp->setDebug();
 $vp->recordio("testing log file");

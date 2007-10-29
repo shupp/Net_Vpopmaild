@@ -10,8 +10,8 @@ try {
 }
 $vp->clogin($sysadminEmail, $sysadminPass);
 $result = $vp->robotGet($domain, $robot);
-var_dump($result['Number']  == $vp->vpopmail_robot_number);
-var_dump($result['Time']    == $vp->vpopmail_robot_time);
+var_dump($result['Number']  == $vp->vpopmailRobotNumber);
+var_dump($result['Time']    == $vp->vpopmailRobotTime);
 var_dump($result['Subject'] == $subject);
 var_dump($result['Forward'] == $forward);
 var_dump($result['Message'] == split("\n", $message));
