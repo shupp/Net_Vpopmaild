@@ -474,7 +474,7 @@ class Net_Vpopmaild {
      * @access public
      * @return void
      */
-    protected function __destruct()
+    public function __destruct()
     {
         if ($this->connected) {
             $this->quit();
@@ -931,7 +931,7 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param string $user 
      * @access public
-     * @return alias array on success, error string on failure
+     * @return alias array on success, null on failure
      */
     public function listAlias($domain, $user = '')
     {
@@ -939,7 +939,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("list_alias $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            return null;
         }
         $alii = array();
         $in = $this->sockRead();
@@ -947,7 +947,60 @@ class Net_Vpopmaild {
             $alii[] = $in;
             $in = $this->sockRead();
         }
-        return $alii;
+        return $this->aliasesToArray($alii);
+    }
+
+    /**
+     * removeAlias 
+     * 
+     * @param mixed $alias 
+     * @param mixed $destination 
+     * @access public
+     * @return true on success, false on failure
+     */
+    public function removeAlias($alias, $destination)
+    {
+        $result = $this->sockWrite("remove_alias $alias $destination");
+        $result = $this->sockRead();
+        if (!$this->statusOk($result)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * deleteAlias 
+     * 
+     * @param mixed $alias 
+     * @access public
+     * @return true on success, false on failure
+     */
+    public function deleteAlias($alias)
+    {
+        $result = $this->sockWrite("delete_alias $alias");
+        $result = $this->sockRead();
+        if (!$this->statusOk($result)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * addAlias 
+     * 
+     * @param mixed $alias 
+     * @param mixed $destination 
+     * @access public
+     * @return true on success, false on failure
+     */
+    public function addAlias($alias, $destination)
+    {
+        $result = $this->sockWrite("add_alias $alias $destination");
+        $result = $this->sockRead();
+        if (!$this->statusOk($result)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1785,10 +1838,10 @@ class Net_Vpopmaild {
      * associative arrays
      * 
      * @param mixed $aliasArray 
-     * @access public
+     * @access protected
      * @return void
      */
-    function aliasesToArray($aliasArray) {
+    protected function aliasesToArray($aliasArray) {
         // generate unique list of aliases
         $aliasList = array();
         while (list($key, $val) = each($aliasArray)) {
@@ -1838,10 +1891,9 @@ class Net_Vpopmaild {
      * @access public
      * @return array of parsed aliases
      */
-    function parseAliases($in_array, $type) {
+    public function parseAliases($in_array, $type) {
         $out_array = array();
-        $raw_array = $this->aliasesToArray($in_array);
-        foreach ($raw_array as $parentkey => $parentval) {
+        foreach ($in_array as $parentkey => $parentval) {
             $is_type = 'forwards';
             foreach ($parentval as $key => $val) {
                 if (preg_match('([|].*' . $this->vpopmailRobotProgram . ')', $val)) {
@@ -1871,7 +1923,7 @@ class Net_Vpopmaild {
      * @access public
      * @return array
      */
-    function paginateArray($array, $page, $limit) {
+    public function paginateArray($array, $page, $limit) {
         $page_count = 1;
         $limit_count = 1;
         $out_array = array();

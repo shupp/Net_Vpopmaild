@@ -27,6 +27,12 @@ $domain2 = "test2.com";
 $nonExistentDomain = 'nonexistentdomain.com';
 $nonExistentUser = 'bogususer';
 
+// Aliases
+$aliasUser = 'testalias';
+$alias = $aliasUser . '@' . $domain;
+$aliasDestination1 = 'user@remoteexample.com';
+$aliasDestination2 = 'user2@remoteexample.com';
+
 // testing robots
 $robot   = 'robot';
 $subject = 'Test Subject';
