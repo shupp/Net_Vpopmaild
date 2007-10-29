@@ -1,8 +1,5 @@
 --TEST--
-Net_Vpopmaild::addIPMap()
-Net_Vpopmaild::getIPMap()
-Net_Vpopmaild::delIPMap()
-Net_Vpopmaild::showIPMap()
+Net_Vpopmaild::addIPMap(), getIPMap(), delIPMap(), showIPMap()
 --FILE--
 <?php
 require_once('tests-config.php');
