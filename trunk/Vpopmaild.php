@@ -1872,12 +1872,10 @@ class Net_Vpopmaild {
      *
      * @param mixed $line
      * @access public
-     * @return mixed null on failure, string on success
+     * @return parsed string
      */
     function displayForwardLine($line) {
-        if (preg_match('/^&/', $line)) {
-            return preg_replace('/^&/', '', $line);
-        }
+        return preg_replace('/^&/', '', $line);
     }
 
 
