@@ -294,13 +294,13 @@ class Net_Vpopmaild {
      * 
      * @access public
      * @return void
-     * @throws Net_Vpopmaild_Exception if connection or initial status fails
+     * @throws Net_Vpopmaild_Fatal_Exception if connection or initial status fails
      */
     public function connect()
     {
         $result = $this->socket->connect($this->address, $this->port, null, $this->timeout);
         if (PEAR::isError($result)) {
-            throw new Net_Vpopmaild_Exception($result);
+            throw new Net_Vpopmaild_Fatal_Exception($result);
         }
         $this->connected = true;
         $in = $this->sockRead();
@@ -420,14 +420,14 @@ class Net_Vpopmaild {
      * @param mixed $data 
      * @access private
      * @return mixed
-     * @throws Net_Vpopmaild_Exception if Net_Socket::writeLine() returns PEAR_Error
+     * @throws Net_Vpopmaild_Fatal_Exception if Net_Socket::writeLine() returns PEAR_Error
      */
     protected function sockWrite($data)
     {
         $this->recordio("sockWrite send: $data");
         $result = $this->socket->writeLine($data);
         if (PEAR::isError($result)) {
-            throw new Net_Vpopmaild_Exception($result);
+            throw new Net_Vpopmaild_Fatal_Exception($result);
         }
         return true;
     }
@@ -439,14 +439,14 @@ class Net_Vpopmaild {
      * 
      * @access private
      * @return string line
-     * @throws Net_Vpopmaild_Exception if Net_Socket::readLine() returns PEAR_Error
+     * @throws Net_Vpopmaild_Fatal_Exception if Net_Socket::readLine() returns PEAR_Error
      */
     protected function sockRead()
     {
         $in = $this->socket->readLine();
         $this->recordio("sockRead Read: $in");
         if (PEAR::isError($in)) {
-            throw new Net_Vpopmaild_Exception($in);
+            throw new Net_Vpopmaild_Fatal_Exception($in);
         }
         return $in;
     }
@@ -768,21 +768,9 @@ class Net_Vpopmaild {
 
         // Get domain directory for robotPath
         $domainArray = $this->domainInfo($domain);
-        if (PEAR::isError($domainArray)) {
-            $this->recordio($domainArray->getMessage());
-            return false;
-        }
         $robotPath = $domainArray['path']."/$robotDir";
         $result = $this->rmDir($robotPath);
-        if (PEAR::isError($result)) {
-            $this->recordio($result->getMessage());
-            return false;
-        }
         $result = $this->RmFile($domain, '', $dotQmailName);
-        if (PEAR::isError($result)) {
-            $this->recordio($result->getMessage());
-            return false;
-        }
         return true;
     }
 
@@ -815,10 +803,6 @@ class Net_Vpopmaild {
 
         // Get domain directory for robotPath
         $domainArray = $this->domainInfo($domain);
-        if (PEAR::isError($domainArray)) {
-            $this->recordio($domainArray->getMessage());
-            return false;
-        }
         $robotPath = $domainArray['path']."/$robotDir";
 
         $messagePath = "$robotPath/message";
@@ -831,24 +815,12 @@ class Net_Vpopmaild {
             $dotQmail[] = $forward;
         }
         $result = $this->writeFile($dotQmail, $domain, '', $dotQmailName);
-        if (PEAR::isError($result)) {
-            $this->recordio($result->getMessage());
-            return false;
-        }
         $result = $this->mkDir($domain, '', $robotDir);
-        if (PEAR::isError($result)) {
-            $this->recordio($result->getMessage());
-            return false;
-        }
         #  NOTE:  You have to add them backwards!
         array_unshift($message, "");
         array_unshift($message, "Subject: $subject");
         array_unshift($message, "From: $user@$domain");
         $result = $this->writeFile($message, $messagePath);
-        if (PEAR::isError($result)) {
-            $this->recordio($result->getMessage());
-            return false;
-        }
         return true;
     }
 
@@ -1111,6 +1083,7 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
+     * @throws new Net_Vpopmaild_Excpetion
      * @return bool true on success, false on failure
      */
     public function rmDir($domain, $user = '', $path = '')
@@ -1119,7 +1092,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("rm_dir $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1255,6 +1228,7 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
+     * @throws Net_Vpopmaild_Exception
      * @return mixed dom_info array on success, error string on failure
      */
     public function domainInfo($domain)
@@ -1262,7 +1236,7 @@ class Net_Vpopmaild {
         $out = $this->sockWrite("dom_info $domain");
         $in = $this->sockRead();
         if (!$this->statusOk($in)) {
-            return "dom_info failed - " . $in;
+            throw new Net_Vpopmaild_Exception($in);
         }
         return $this->readInfo();
     }
