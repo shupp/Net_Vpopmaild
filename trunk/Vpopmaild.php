@@ -593,14 +593,15 @@ class Net_Vpopmaild {
      * @param mixed $ip 
      * @param mixed $domain 
      * @access public
-     * @return TRUE on success, FALSE on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return TRUE on success
      */
     public function addIPMap($ip, $domain)
     {
         $status = $this->sockWrite("add_ip_map $ip $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return FALSE;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return TRUE;
     }
@@ -612,14 +613,15 @@ class Net_Vpopmaild {
      * @param mixed $ip 
      * @param mixed $domain 
      * @access public
-     * @return TRUE on success, FALSE on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return TRUE on success
      */
     public function delIPMap($ip, $domain)
     {
         $status = $this->sockWrite("del_ip_map $ip $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return FALSE;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return TRUE;
     }
@@ -631,7 +633,8 @@ class Net_Vpopmaild {
      * return sorted ip map list
      * 
      * @access public
-     * @return mixed ip map array
+     * @throws Net_Vpopmaild_Exception
+     * @return mixed ip map array on success
      */
     public function showIPMap()
     {
