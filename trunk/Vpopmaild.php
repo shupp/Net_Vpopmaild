@@ -1766,7 +1766,12 @@ class Net_Vpopmaild {
                             "Subject: $subject",
                             '',
                             $message);
-        $this->rmDir($domain, $user, $vacationDir);
+        // We don't care of the directory doesn't exist
+        // So catch the exception silently
+        try {
+            $this->rmDir($domain, $user, $vacationDir);
+        } catch (Net_Vpopmaild_Exception $e) {
+        }
         $this->mkDir($domain, $user, $vacationDir);
         $this->writeFile($contents, $domain, $user, $messageFile);
     }

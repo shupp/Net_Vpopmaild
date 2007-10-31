@@ -1,5 +1,5 @@
 --TEST--
-Net_Vpopmaild::getVacation()
+Net_Vpopmaild::delVacation()
 --FILE--
 <?php
 
