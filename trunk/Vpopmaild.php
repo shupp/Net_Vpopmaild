@@ -12,9 +12,7 @@
  * @todo Do not rely on PHP4 packages
  * @todo Robot creation - check for existing accounts first?  or 
  * is it an issue with OS X fs, or vpopmaild?
- * @todo Finish going over documentation
- * @todo Coordinate error handling with vpopmaild error numbers
- * @todo allow redaInfo() to support mutlitple items/arrays for listUsers()
+ * @todo allow readInfo() to support mutlitple items/arrays for listUsers()
  * @todo getQuota() should support maildir++ completely (file count: C)
  */
 
