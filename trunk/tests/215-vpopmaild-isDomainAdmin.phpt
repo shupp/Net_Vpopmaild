@@ -10,7 +10,11 @@ try {
 }
 $vp->clogin($sysadminEmail, $sysadminPass);
 
-$vp->delUser($domain, $nonExistentUser);
+try {
+    $vp->delUser($domain, $nonExistentUser);
+} catch (Net_Vpopmaild_Exception $e) {
+}
+
 $vp->addUser($domain, $nonExistentUser, 'test');
 $info = $vp->userInfo($domain, $nonExistentUser);
 var_dump($vp->isDomainAdmin($domain, $info));

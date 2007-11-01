@@ -11,7 +11,7 @@ try {
 $vp->clogin($sysadminEmail, $sysadminPass);
 
 $result = $vp->writeFile($testFileContents, $domain, $user, $testFile);
-var_dump(empty($result));
+var_dump($result);
 ?>
 --EXPECT--
 bool(true)

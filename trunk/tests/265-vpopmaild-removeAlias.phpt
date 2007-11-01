@@ -11,7 +11,10 @@ try {
 }
 
 $vp->clogin($sysadminEmail, $sysadminPass);
-$vp->deleteAlias($alias);
+try {
+    $vp->deleteAlias($alias);
+} catch (Net_Vpopmaild_Exception $e) {
+}
 $vp->addAlias($alias, $aliasDestination1);
 $vp->addAlias($alias, $aliasDestination2);
 

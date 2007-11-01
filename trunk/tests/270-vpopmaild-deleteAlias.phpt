@@ -13,8 +13,10 @@ try {
 $vp->clogin($sysadminEmail, $sysadminPass);
 $vp->addAlias($alias, $aliasDestination1);
 var_dump($vp->deleteAlias($alias));
-var_dump($vp->deleteAlias($alias));
+try {
+    $vp->deleteAlias($alias);
+} catch (Net_Vpopmaild_Exception $e) {
+}
 ?>
 --EXPECT--
 bool(true)
-bool(false)

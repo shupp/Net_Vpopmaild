@@ -10,10 +10,17 @@ try {
 }
 $vp->clogin($sysadminEmail, $sysadminPass);
 
-$vp->delDomain($nonExistentDomain);
+try {
+    $vp->delDomain($nonExistentDomain);
+} catch (Net_Vpopmaild_Exception $e) {
+}
 $result = $vp->addDomain($nonExistentDomain, $sysadminPass);
 var_dump($result);
-$vp->delDomain($nonExistentDomain);
+
+try {
+    $vp->delDomain($nonExistentDomain);
+} catch (Net_Vpopmaild_Exception $e) {
+}
 ?>
 --EXPECT--
 bool(true)

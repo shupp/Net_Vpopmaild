@@ -11,8 +11,14 @@ try {
 }
 
 $vp->clogin($sysadminEmail, $sysadminPass);
-$vp->robotSet($domain, $robot, $subject, $message, $forward);
-$vp->deleteAlias($alias);
+try {
+    $vp->robotSet($domain, $robot, $subject, $message, $forward);
+} catch (Net_Vpopmaild_Exception $e) {
+}
+try {
+    $vp->deleteAlias($alias);
+} catch (Net_Vpopmaild_Exception $e) {
+}
 $vp->addAlias($alias, $aliasDestination1);
 $vp->addAlias($alias, $aliasDestination2);
 $aliases = $vp->listAlias($domain);

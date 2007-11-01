@@ -991,7 +991,7 @@ class Net_Vpopmaild {
      * @param string $path 
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed void on success
+     * @return mixed true on success
      */
     public function rmFile($domain, $user = '', $path = '')
     {
@@ -1013,7 +1013,7 @@ class Net_Vpopmaild {
      * @param string $path 
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return true on success
      */
     public function writeFile($contents, $domain, $user = '', $path = '')
     {
@@ -1031,6 +1031,7 @@ class Net_Vpopmaild {
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
+        return true;
     }
 
     /**
@@ -1765,7 +1766,11 @@ class Net_Vpopmaild {
             $array = explode(' ', $line);
             $path = $array[3];
         }
-        $contents = $this->readFile($path);
+        try {
+            $contents = $this->readFile($path);
+        } catch (Net_Vpopmaild_Exception $e) {
+            return null;
+        }
         if (!is_array($contents)) {
             return null;
         }
