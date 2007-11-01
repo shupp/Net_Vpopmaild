@@ -594,7 +594,7 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return TRUE on success
+     * @return true on success
      */
     public function addIPMap($ip, $domain)
     {
@@ -603,7 +603,7 @@ class Net_Vpopmaild {
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
-        return TRUE;
+        return true;
     }
     /**
      * delIPMap 
@@ -614,7 +614,7 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return TRUE on success
+     * @return true on success
      */
     public function delIPMap($ip, $domain)
     {
@@ -623,7 +623,7 @@ class Net_Vpopmaild {
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
-        return TRUE;
+        return true;
     }
     /**
      * showIPMap 
