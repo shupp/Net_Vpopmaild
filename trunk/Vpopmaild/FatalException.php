@@ -3,7 +3,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * Net_Vpopmaild_Fatal_Exception 
+ * Net_Vpopmaild_FatalException 
  * 
  * @uses        PEAR_Exception
  * @package     Net_Vpopmaild
@@ -16,7 +16,7 @@
 require_once 'PEAR/Exception.php';
 
 /**
- * Net_Vpopmaild_Fatal_Exception
+ * Net_Vpopmaild_FatalException
  *
  * A small layer above 
  * {@link http://pear.php.net/manual/en/core.pear.pear-exception.php PEAR_Exception}
@@ -25,7 +25,7 @@ require_once 'PEAR/Exception.php';
  * @author      Joe Stump <joe@joestump.net>
  * @package     Net_Vpopmaild
  */
-class Net_Vpopmaild_Fatal_Exception extends PEAR_Exception
+class Net_Vpopmaild_FatalException extends PEAR_Exception
 {
     /**
      * __construct

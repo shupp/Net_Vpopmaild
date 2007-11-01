@@ -294,13 +294,13 @@ class Net_Vpopmaild {
      * 
      * @access public
      * @return void
-     * @throws Net_Vpopmaild_Fatal_Exception if connection or initial status fails
+     * @throws Net_Vpopmaild_FatalException if connection or initial status fails
      */
     public function connect()
     {
         $result = $this->socket->connect($this->address, $this->port, null, $this->timeout);
         if (PEAR::isError($result)) {
-            throw new Net_Vpopmaild_Fatal_Exception($result);
+            throw new Net_Vpopmaild_FatalException($result);
         }
         $this->connected = true;
         $in = $this->sockRead();
@@ -333,7 +333,7 @@ class Net_Vpopmaild {
      * 
      * @param string $data 
      * @access private
-     * @return bool
+     * @return true on success, false on failure
      */
     protected function statusOk($data)
     {
@@ -351,7 +351,7 @@ class Net_Vpopmaild {
      * 
      * @param string $data 
      * @access private
-     * @return bool
+     * @return true on success, false on failure
      */
     protected function statusOkMore($data)
     {
@@ -368,7 +368,7 @@ class Net_Vpopmaild {
      * 
      * @param string $data 
      * @access private
-     * @return bool
+     * @return true on success, false on failure
      */
     protected function statusOkNoMore($data)
     {
@@ -385,7 +385,7 @@ class Net_Vpopmaild {
      * 
      * @param string $data 
      * @access private
-     * @return bool
+     * @return true on success, false on failure
      */
     protected function statusErr($data)
     {
@@ -402,7 +402,7 @@ class Net_Vpopmaild {
      * 
      * @param string $data 
      * @access private
-     * @return bool
+     * @return true on success, false on failure
      */
     protected function dotOnly($data)
     {
@@ -420,14 +420,14 @@ class Net_Vpopmaild {
      * @param mixed $data 
      * @access private
      * @return mixed
-     * @throws Net_Vpopmaild_Fatal_Exception if Net_Socket::writeLine() returns PEAR_Error
+     * @throws Net_Vpopmaild_FatalException if Net_Socket::writeLine() returns PEAR_Error
      */
     protected function sockWrite($data)
     {
         $this->recordio("sockWrite send: $data");
         $result = $this->socket->writeLine($data);
         if (PEAR::isError($result)) {
-            throw new Net_Vpopmaild_Fatal_Exception($result);
+            throw new Net_Vpopmaild_FatalException($result);
         }
         return true;
     }
@@ -439,14 +439,14 @@ class Net_Vpopmaild {
      * 
      * @access private
      * @return string line
-     * @throws Net_Vpopmaild_Fatal_Exception if Net_Socket::readLine() returns PEAR_Error
+     * @throws Net_Vpopmaild_FatalException if Net_Socket::readLine() returns PEAR_Error
      */
     protected function sockRead()
     {
         $in = $this->socket->readLine();
         $this->recordio("sockRead Read: $in");
         if (PEAR::isError($in)) {
-            throw new Net_Vpopmaild_Fatal_Exception($in);
+            throw new Net_Vpopmaild_FatalException($in);
         }
         return $in;
     }
@@ -491,14 +491,15 @@ class Net_Vpopmaild {
      * @param mixed $email 
      * @param mixed $password 
      * @access public
-     * @return bool true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success, false on failure
      */
     public function clogin($email, $password)
     {
         $status = $this->sockWrite("clogin $email $password");
         $in = $this->sockRead();
         if (!$this->StatusOk($in)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($in);
         }
         $this->loginUser = $this->readInfo();
         return true;
@@ -571,6 +572,7 @@ class Net_Vpopmaild {
         $this->sockWrite("get_ip_map $ip");
         $in = $this->sockRead();
         if (!$this->statusOk($in)) {
+            // Error returned is not useful
             return NULL;
         }
         $in = $this->sockRead();
@@ -773,7 +775,7 @@ class Net_Vpopmaild {
         $domainArray = $this->domainInfo($domain);
         $robotPath = $domainArray['path']."/$robotDir";
         $result = $this->rmDir($robotPath);
-        $result = $this->RmFile($domain, '', $dotQmailName);
+        $result = $this->rmFile($domain, '', $dotQmailName);
         return true;
     }
 
@@ -788,7 +790,8 @@ class Net_Vpopmaild {
      * @param mixed $time 
      * @param mixed $number 
      * @access public
-     * @return bool true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function robotSet($domain, $user, $subject, $message, $forward, $time = '', $number = '')
     {
@@ -833,7 +836,8 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return mixed string error on failure, robot array on success
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return array robot on success
      */
     public function robotGet($domain, $user)
     {
@@ -846,15 +850,15 @@ class Net_Vpopmaild {
         $dotQmail = $this->dotQmailSplit($dotQmail);
         $this->recordio("dotQmaili split: " . print_r($dotQmail, 1));
         if (count($dotQmail['Program']) > 1)  { #  Too many programs
-            return 'ERR - too many programs in robot dotqmail file';
+            throw new Net_Vpopmaild_Exception('-ERR 0 too many programs in robot dotqmail file');
         }
         if (!preg_match("({$this->vpopmailRobotProgram})", $dotQmail['Program'][0])) {
-            return 'ERR - Mail Robot program not found';
+            throw new Net_Vpopmaild_Exception('-ERR 0 Mail Robot program not found');
         }
         list($Program, $Time, $Number, $MessageFile, $RobotPath) = explode(' ', $dotQmail['Program'][0]);
         $message = $this->readFile($MessageFile);
         if (!is_array($message)) {
-            return "ERR - Unable to find message file - " . $message;
+            throw new Net_Vpopmaild_Exception('-ERR 0 Unable to find message file - ' . $message);
         }
         $result = array();
         $result['Time'] = $Time;
@@ -880,6 +884,7 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param string $user 
      * @access public
+     * @throws Net_Vpopmaild_Exception on failure
      * @return array lists array on success, error on failure
      */
     public function listLists($domain, $user = '')
@@ -888,8 +893,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("list_lists $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            $this->recordio($status);
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $lists = array();
         $in = $this->sockRead();
@@ -931,14 +935,15 @@ class Net_Vpopmaild {
      * @param mixed $alias 
      * @param mixed $destination 
      * @access public
-     * @return true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function removeAlias($alias, $destination)
     {
         $result = $this->sockWrite("remove_alias $alias $destination");
         $result = $this->sockRead();
         if (!$this->statusOk($result)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($result);
         }
         return true;
     }
@@ -948,14 +953,15 @@ class Net_Vpopmaild {
      * 
      * @param mixed $alias 
      * @access public
-     * @return true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function deleteAlias($alias)
     {
         $result = $this->sockWrite("delete_alias $alias");
         $result = $this->sockRead();
         if (!$this->statusOk($result)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($result);
         }
         return true;
     }
@@ -966,14 +972,15 @@ class Net_Vpopmaild {
      * @param mixed $alias 
      * @param mixed $destination 
      * @access public
-     * @return true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function addAlias($alias, $destination)
     {
         $result = $this->sockWrite("add_alias $alias $destination");
         $result = $this->sockRead();
         if (!$this->statusOk($result)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($result);
         }
         return true;
     }
@@ -985,7 +992,8 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @return mixed void on success, error string on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed void on success
      */
     public function rmFile($domain, $user = '', $path = '')
     {
@@ -993,8 +1001,9 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("rm_file $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
+        return true;
     }
 
     /**
@@ -1005,8 +1014,8 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @throws Net_Vpopmaild_Exception
-     * @return mixed void on success, error string on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true on success
      */
     public function writeFile($contents, $domain, $user = '', $path = '')
     {
@@ -1022,7 +1031,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite(".");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
     }
 
@@ -1033,7 +1042,8 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @return mixed file contents as array on success, false on failure
+     * @thows Net_Vpopmaild_Exception on failure
+     * @return mixed file contents as array on success
      */
     public function readFile($domain, $user = '', $path = '')
     {
@@ -1041,7 +1051,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("read_file $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $fileContents = array();
         $in = $this->sockRead();
@@ -1059,7 +1069,8 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @return array of directory contents on success, string error on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return array of directory contents on success
      */
     public function listDir($domain, $user = '', $path = '')
     {
@@ -1067,7 +1078,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("list_dir $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $directoryContents = array();
         $in = $this->sockRead();
@@ -1086,8 +1097,8 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @throws new Net_Vpopmaild_Excpetion
-     * @return bool true on success, false on failure
+     * @throws new Net_Vpopmaild_Excpetion on failure
+     * @return bool true on success
      */
     public function rmDir($domain, $user = '', $path = '')
     {
@@ -1108,7 +1119,8 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @return mixed true on success, error string on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true on success
      */
     public function mkDir($domain, $user = '', $path = '')
     {
@@ -1116,7 +1128,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("mk_dir $basePath");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1126,16 +1138,16 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return mixed array limits on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed array limits on success
      */
     public function getLimits($domain)
     {
         $status = $this->sockWrite("get_limits $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
-        $this->recordio('balls');
         $status = $this->sockRead();
         $limits = $this->readInfo();
         return $limits;
@@ -1147,7 +1159,8 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $limits 
      * @access public
-     * @return mixed true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true on success
      */
     public function setLimits($domain, $limits)
     {
@@ -1185,7 +1198,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("set_limits $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         // string parms
         foreach ($stringParms as $name) {
@@ -1204,7 +1217,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite(".");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1214,14 +1227,15 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return mixed true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function delLimits($domain)
     {
         $status = $this->sockWrite("del_limits $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1231,8 +1245,8 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @throws Net_Vpopmaild_Exception
-     * @return mixed dom_info array on success, error string on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed dom_info array on success
      */
     public function domainInfo($domain)
     {
@@ -1249,14 +1263,15 @@ class Net_Vpopmaild {
      * @param int $page 
      * @param int $perPage 
      * @access public
-     * @return mixed domains array on success, error string on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed domains array on success
      */
     public function listDomains($page = 0, $perPage = 0)
     {
         $return = $this->sockWrite("list_domains $page $perPage");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $domains = array();
         $list = array();
@@ -1274,20 +1289,21 @@ class Net_Vpopmaild {
      * domainCount 
      * 
      * @access public
-     * @return int count on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return int count on success
      */
     public function domainCount()
     {
         $status = $this->sockWrite("domain_count");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $in = $this->readInfo();
         if (array_key_exists('count', $in)) {
             return $in['count'];
         }
-        return false;
+        throw new Net_Vpopmaild_Exception('Error getting domain count');
     }
     /**
      * addDomain 
@@ -1295,14 +1311,15 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $password 
      * @access public
-     * @return mixed true on success, false
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function addDomain($domain, $password)
     {
         $status = $this->sockWrite("add_domain $domain $password");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1313,14 +1330,15 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $alias 
      * @access public
-     * @return mixed true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true on success
      */
     public function addAliasDomain($domain, $alias)
     {
         $status = $this->sockWrite("add_alias_domain $domain $alias");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1329,14 +1347,15 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return mixed true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true on success
      */
     public function delDomain($domain)
     {
         $status = $this->sockWrite("del_domain $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1372,14 +1391,15 @@ class Net_Vpopmaild {
      * @param mixed $user 
      * @param mixed $password 
      * @access public
-     * @return mixed true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true on success
      */
     public function addUser($domain, $user, $password)
     {
         $status = $this->sockWrite("add_user $user@$domain $password");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1390,14 +1410,15 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return true on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return true on success
      */
     public function delUser($domain, $user)
     {
         $status = $this->sockWrite("del_user $user@$domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1410,7 +1431,8 @@ class Net_Vpopmaild {
      * @param mixed $user 
      * @param mixed $userInfo 
      * @access public
-     * @return mixed true success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed true success
      */
     public function modUser($domain, $user, $userInfo)
     {
@@ -1441,7 +1463,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite("mod_user $user@$domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         foreach ($stringParms as $name) {
             if (!empty($userInfo[$name])) {
@@ -1458,7 +1480,7 @@ class Net_Vpopmaild {
         $status = $this->sockWrite(".");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return true;
     }
@@ -1468,14 +1490,15 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return mixed user info array on success, error string on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return mixed user info array on success
      */
     public function userInfo($domain, $user)
     {
         $status = $this->sockWrite("user_info $user@$domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return $status;
+            throw new Net_Vpopmaild_Exception($status);
         }
         return $this->readInfo();
     }
@@ -1528,20 +1551,21 @@ class Net_Vpopmaild {
      * 
      * @param mixed $domain 
      * @access public
-     * @return int count on success, false on failure
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return int count on success
      */
     public function userCount($domain)
     {
         $status = $this->sockWrite("user_count $domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $in = $this->readInfo();
         if (array_key_exists('count', $in)) {
             return $in['count'];
         }
-        return false;
+        throw new Net_Vpopmaild_Exception($status);
     }
 
     /**
@@ -1550,14 +1574,15 @@ class Net_Vpopmaild {
      * @param mixed $domain 
      * @param mixed $user 
      * @access public
-     * @return false on failure, array('time' => (timestamp), 'ip' => IP (0.0.0.0 for none))
+     * @throws Net_Vpopmaild_Exception on failure
+     * @return array('time' => (timestamp), 'ip' => IP (0.0.0.0 for none))
      */
     public function getLastAuth($domain, $user)
     {
         $status = $this->sockWrite("get_lastauth $user@$domain");
         $status = $this->sockRead();
         if (!$this->statusOk($status)) {
-            return false;
+            throw new Net_Vpopmaild_Exception($status);
         }
         $in = $this->readInfo();
         return $in;
@@ -1575,7 +1600,9 @@ class Net_Vpopmaild {
      */
     public function authenticate($email, $password)
     {
-        if (($result = $this->clogin($email, $password)) == false) {
+        try {
+            $this->clogin($email, $password);
+        } catch (Net_Vpopmaild_Exception $e) {
             return false;
         }
         // Easy way to access domain
@@ -1589,7 +1616,7 @@ class Net_Vpopmaild {
      * 
      * @param string $acct_info 
      * @access public
-     * @return void
+     * @return bool result of $this->getGidBit()
      */
     function isSysAdmin($acct_info = '') {
         if ($acct_info == '') {
@@ -1821,7 +1848,7 @@ class Net_Vpopmaild {
      * 
      * @param mixed $aliasArray 
      * @access protected
-     * @return void
+     * @return array of aliases
      */
     protected function aliasesToArray($aliasArray) {
         // generate unique list of aliases
