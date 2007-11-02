@@ -3,11 +3,6 @@ Net_Vpopmaild::addIPMap(), getIPMap(), delIPMap(), showIPMap()
 --FILE--
 <?php
 require_once('tests-config.php');
-try {
-    $vp->connect();
-} catch (Net_Vpopmaild_Exception $e) {
-    echo "Error connecting to vpopmaild\n";
-}
 $vp->clogin($sysadminEmail, $sysadminPass);
 var_dump($vp->addIPMap($ip1, $domain1));
 var_dump($vp->addIPMap($ip2, $domain2));

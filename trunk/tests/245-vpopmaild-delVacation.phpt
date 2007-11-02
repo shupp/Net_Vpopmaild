@@ -3,12 +3,7 @@ Net_Vpopmaild::delVacation()
 --FILE--
 <?php
 
-require_once('tests-config.php');
-try {
-    $vp->connect();
-} catch (Net_Vpopmaild_Exception $e) {
-    echo $e->getMessage();
-}
+require_once 'tests-config.php';
 
 $vp->clogin($sysadminEmail, $sysadminPass);
 $vp->setVacation($user, $domain, $vacationSubject, $vacationMessage);

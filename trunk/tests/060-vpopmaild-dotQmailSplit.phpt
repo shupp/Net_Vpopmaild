@@ -3,11 +3,6 @@ Net_Vpopmaild::dotQmailSplit()
 --FILE--
 <?php
 require_once('tests-config.php');
-try {
-    $vp->connect();
-} catch (Net_Vpopmaild_Exception $e) {
-    echo "Error connecting to vpopmaild\n";
-}
 $vp->clogin($sysadminEmail, $sysadminPass);
 $array = $vp->dotQmailSplit($dotQmailFile);
 var_dump($array['Forward'][0] == $dotQmailFile['Forward']);

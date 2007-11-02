@@ -54,43 +54,17 @@ require_once('Net/Vpopmaild/Exception.php');
  */
 class Net_Vpopmaild {
 
-    /**
-     * address 
-     * 
-     * Address of vpopmaild host
-     * 
-     * @var mixed
-     * @access public
-     */
-    public $address = 'localhost';
-    /**
-     * port 
-     * 
-     * port of vpopmaild host (deaults to 89)
-     * 
-     * @var mixed
-     * @access public
-     */
-    public $port = 89;
-    /**
-     * Socket 
-     * 
-     * Actual socket from Net_Socket
-     * 
-     * @var mixed
-     * @access private
-     */
     private $socket = null;
     /**
      * debug 
      * 
-     * Set to 1 to enable logging.  Can be set by {@link setDebug()}
+     * Set to true to enable logging.  Can be set by {@link setDebug()}
      * 
-     * @var mixed
+     * @var bool
      * @access private
      * @see function setDebug
      */
-    protected $debug = 0;
+    protected $debug = false;
     /**
      * loginUser 
      * 
@@ -109,15 +83,6 @@ class Net_Vpopmaild {
      * @access private
      */
     private $log = null;
-    /**
-     * logFile
-     * 
-     * Location of log file
-     * 
-     * @var mixed
-     * @access public
-     */
-    public $logFile = '/tmp/vpopmaild.log';
     /**
      * gidFlagValues 
      * 
@@ -213,16 +178,6 @@ class Net_Vpopmaild {
             'z' => 0);/* ignored */
 
     /**
-     * timeout 
-     * 
-     * Timeout for Net_Socket::connect();
-     * 
-     * @var int
-     * @access public
-     */
-    public $timeout = 30;
-
-    /**
      * connected 
      * 
      * set to true only when connected.  This is used only by __destruct()
@@ -252,17 +207,18 @@ class Net_Vpopmaild {
      * Set {@link $debug} (1 by default).
      * Call this to set {@link $debug} to 1 and enable logging.
      * 
-     * @param int $value 
+     * @param bool $value 
+     * @param string $logFile path to local log file, defaults to '/tmp/vpopmaild.log'
      * @access public
      * @return void
      */
-    public function setDebug($value = 1)
+    public function setDebug($value = true, $logFile = '/tmp/vpopmaild.log')
     {
         // Set debug value
-        $this->debug = $value;
+        $this->debug = (bool)$value;
         // Instantiate Log object if necessary
-        if ($this->debug > 0 && is_null($this->log)) {
-            $this->log = Log::factory('file', $this->logFile);
+        if ($this->debug && is_null($this->log)) {
+            $this->log = Log::factory('file', $logFile);
             if (is_null($this->log)) {
                 throw new Net_Vpopmaild_Exception("Error creating Log object");
             }
@@ -288,15 +244,18 @@ class Net_Vpopmaild {
     /**
      * connect 
      * 
-     * Make connection to vpopmaild.
+     * Make a connection to vpopmaild
      * 
+     * @param string $address 
+     * @param int $port 
+     * @param int $timeout 
      * @access public
-     * @return void
      * @throws Net_Vpopmaild_FatalException if connection or initial status fails
+     * @return void
      */
-    public function connect()
+    public function connect($address = 'localhost', $port = 89, $timeout = 30)
     {
-        $result = $this->socket->connect($this->address, $this->port, null, $this->timeout);
+        $result = $this->socket->connect($address, $port, null, $timeout);
         if (PEAR::isError($result)) {
             throw new Net_Vpopmaild_FatalException($result);
         }
@@ -319,7 +278,7 @@ class Net_Vpopmaild {
      */
     public function recordio($data)
     {
-        if ($this->debug > 0) {
+        if ($this->debug) {
             $this->log->log($data);
         }
     }
@@ -1949,6 +1908,5 @@ class Net_Vpopmaild {
         }
         return $out_array;
     }
-
 }
 ?>

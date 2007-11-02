@@ -3,11 +3,6 @@ Net_Vpopmaild::isUserAdmin()
 --FILE--
 <?php
 require_once('tests-config.php');
-try {
-    $vp->connect();
-} catch (Net_Vpopmaild_Exception $e) {
-    echo $e->getMessage();
-}
 
 // Create temp user
 $vp->authenticate($sysadminEmail, $sysadminPass);

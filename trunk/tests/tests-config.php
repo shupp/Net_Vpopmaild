@@ -3,6 +3,8 @@
 // SETTINGS
 require_once 'tests-setpath.php';
 $vpopmaildHost = 'localhost';
+$vpopmaildPort = 89;
+$vpopmaildTimeout = 5;
 $logFile = '/tmp/vpopmaild.log';
 
 // Sysadmin user info
@@ -64,9 +66,9 @@ $vacationMessage = 'Do Not Bother Me!';
 require_once 'Net/Vpopmaild.php';
 $class = isset($class) ? $class : 'Net_Vpopmaild';
 $vp = new $class;
-$vp->address = $vpopmaildHost;
-$vp->timeout = 5;
-$vp->logFile = $logFile;
-$vp->setDebug();
+if (!isset($skipConnect)) {
+    $vp->connect($vpopmaildHost, 89, 5);
+    $vp->setDebug(true, $logFile);
+}
 
 ?>

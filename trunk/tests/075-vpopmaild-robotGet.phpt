@@ -3,11 +3,6 @@ Net_Vpopmaild::robotGet()
 --FILE--
 <?php
 require_once('tests-config.php');
-try {
-    $vp->connect();
-} catch (Net_Vpopmaild_Exception $e) {
-    echo "Error connecting to vpopmaild\n";
-}
 $vp->clogin($sysadminEmail, $sysadminPass);
 $result = $vp->robotGet($domain, $robot);
 var_dump($result['Number']  == $vp->vpopmailRobotNumber);
