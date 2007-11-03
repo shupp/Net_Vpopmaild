@@ -36,7 +36,7 @@ class Net_Vpopmaild_Exception extends PEAR_Exception
     public function __construct($message, $code = 0)
     {
 
-        if (preg_match('/^[-]ERR /', $data)) {
+        if (preg_match('/^[-]ERR /', $message)) {
             $code = preg_replace('/^-ERR ([^ ]+) .*$/', '\1', $message);
             $msg = preg_replace('/^-ERR ([^ ]+) (.*$)/', '\2', $message);
         }
