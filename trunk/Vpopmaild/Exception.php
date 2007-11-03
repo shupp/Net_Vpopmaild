@@ -7,6 +7,7 @@
  * 
  * @uses        PEAR_Exception
  * @package     Net_Vpopmaild
+ * @category    Net
  */
 
 /**
