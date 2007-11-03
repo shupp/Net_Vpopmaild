@@ -8,11 +8,9 @@
 require_once('Net/Vpopmaild.php');
 $vpop = new Net_Vpopmaild();
 
-// Let's customize the host/port
-$vpop->address = '192.168.1.1';
-$vpop->port = 589;
 try {
-    $vpop->connect();
+    // The host, port, and timeout below are the defaults and can be omitted
+    $vpop->connect('localhost', '89', '30');
 } catch (Net_Vpopmaild_Exception $e) {
     echo 'Error connecting to vpopmaild: ' . $e->getMessage();
     exit;
