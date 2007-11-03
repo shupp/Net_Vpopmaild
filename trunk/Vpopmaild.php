@@ -1000,7 +1000,7 @@ class Net_Vpopmaild {
      * @param string $user 
      * @param string $path 
      * @access public
-     * @thows Net_Vpopmaild_Exception on failure
+     * @throws Net_Vpopmaild_Exception on failure
      * @return mixed file contents as array on success
      */
     public function readFile($domain, $user = '', $path = '')
