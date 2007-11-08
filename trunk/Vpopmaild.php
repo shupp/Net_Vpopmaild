@@ -1664,7 +1664,7 @@ class Net_Vpopmaild {
         // Set default template settings
         $defaults['comment'] = $account_info['comment'];
         $defaults['forward'] = '';
-        $defaults['save_a_copy_checked'] = '';
+        $defaults['save_a_copy'] = '';
         $defaults['vacation'] = '';
         $defaults['vacation_subject'] = '';
         $defaults['vacation_body'] = '';
@@ -1682,7 +1682,7 @@ class Net_Vpopmaild {
             // now let's parse it
             while (list($key, $val) = each($contents)) {
                 if ($val == $account_info['user_dir'].'/Maildir/' || $val == './Maildir/') {
-                    $defaults['save_a_copy_checked'] = ' checked';
+                    $defaults['save_a_copy'] = ' checked';
                     continue;
                 }
                 if (preg_match("({$this->vpopmailRobotProgram})", $val)) {
