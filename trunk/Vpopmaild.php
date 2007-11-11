@@ -3,11 +3,14 @@
 /**
  * Net_Vpopmaild 
  * 
- * @package Net_Vpopmaild
+ * PHP Version 5
+ *
  * @category Net
- * @author Bill Shupp <hostmaster@shupp.org> 
- * @author Rick Widmer
- * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @package  Net_Vpopmaild
+ * @author   Bill Shupp <hostmaster@shupp.org> 
+ * @author   Rick Widmer <vchkpw@developersdesk.com>
+ * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @link     http://shupp.org/Net_Vpopmaild
  * @todo Finish ezmlm functions, waiting on vpopmaild updates
  * @todo Do not rely on PHP4 packages
  * @todo Robot creation - check for existing accounts first?  or 
@@ -16,22 +19,24 @@
  * @todo getQuota() should support maildir++ completely (file count: C)
  */
 
-require_once('Validate.php');
-require_once('Net/Vpopmaild/Exception.php');
-require_once('Net/Vpopmaild/FatalException.php');
+require_once 'Validate.php';
+require_once 'Net/Vpopmaild/Exception.php';
+require_once 'Net/Vpopmaild/FatalException.php';
 
 /**
  * Net_Vpopmaild 
  * 
  * A class for talking to vpopmaild
  * 
- * @package Net_Vpopmaild
  * @category Net
- * @author Bill Shupp <hostmaster@shupp.org> 
- * @author Rick Widmer
- * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @package  Net_Vpopmaild
+ * @author   Bill Shupp <hostmaster@shupp.org> 
+ * @author   Rick Widmer <vchkpw@developersdesk.com>
+ * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @link     http://shupp.org/Net_Vpopmaild
  */
-class Net_Vpopmaild extends Net_Vpopmaild_Base {
+class Net_Vpopmaild extends Net_Vpopmaild_Base
+{
 
     /**
      * clogin 
@@ -39,8 +44,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * compact login.  Returns a compact list of user info which is stored in
      * {@link $loginUser}
      * 
-     * @param mixed $email 
-     * @param mixed $password 
+     * @param mixed $email    email address
+     * @param mixed $password password
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success, false on failure
@@ -48,7 +54,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     public function clogin($email, $password)
     {
         $status = $this->sockWrite("clogin $email $password");
-        $in = $this->sockRead();
+        $in     = $this->sockRead();
         if (!$this->StatusOk($in)) {
             throw new Net_Vpopmaild_Exception($in);
         }
@@ -60,9 +66,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Get gid bit flag.
      * 
-     * @param mixed $bitmap 
-     * @param mixed $bit 
-     * @param mixed $flip 
+     * @param mixed $bitmap bitmap
+     * @param mixed $bit    bit flag
+     * @param mixed $flip   flip it?
+     *
      * @access public
      * @return bool true on success, false on failure
      * @throws Net_Vpopmaild_Exception if $bit is unknown
@@ -71,7 +78,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     public function getGidBit($bitmap, $bit, $flip = false)
     {
         if (!isset($this->gidFlagValues[$bit])) {
-            throw new Net_Vpopmaild_Exception("Error - unknown GID Bit value specified: $bit");
+            throw new Net_Vpopmaild_Exception(
+                "Error - unknown GID Bit value specified: $bit");
         }
         $bitValue = $this->gidFlagValues[$bit];
         if ($flip) {
@@ -85,10 +93,11 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Set gid bit flag.
      * 
-     * @param mixed $bitmap 
-     * @param mixed $bit 
-     * @param bool $value 
-     * @param mixed $flip 
+     * @param mixed &$bitmap bitmap to set
+     * @param mixed $bit     bit flag
+     * @param bool  $value   value
+     * @param mixed $flip    flip it?
+     *
      * @access public
      * @return void
      * @throws Net_Vpopmaild_Exception if $bit is unknown
@@ -97,7 +106,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     public function setGidBit(&$bitmap, $bit, $value, $flip = false)
     {
         if (!isset($this->gidFlagValues[$bit])) {
-            throw new Net_Vpopmaild_Exception("Unknown GID Bit value specified. $bit");
+            throw new Net_Vpopmaild_Exception(
+                "Unknown GID Bit value specified. $bit");
         }
         $bitValue = $this->gidFlagValues[$bit];
         if ($flip) {
@@ -113,9 +123,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Get IP Map entry
      * 
-     * @param array
+     * @param string $ip IP Address
+     *
      * @access public
-     * @return string domain on success, NULL on failure
+     * @return string domain on success, null on failure
      */
     public function getIPMap($ip)
     {
@@ -124,17 +135,19 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         $in = $this->sockRead();
         if (!$this->statusOk($in)) {
             // Error returned is not useful
-            return NULL;
+            return null;
         }
         $in = $this->sockRead();
-        while (!$this->statusErr($in) && !$this->statusOk($in) && !$this->dotOnly($in)) {
+        while (!$this->statusErr($in) 
+                && !$this->statusOk($in) 
+                && !$this->dotOnly($in)) {
             $lists[] = $in;
-            $in = $this->sockRead();
+            $in      = $this->sockRead();
         }
-        if(count($lists) == 0) {
-            return NULL;
+        if (count($lists) == 0) {
+            return null;
         }
-        $exploded = explode(" ", $lists[0]);
+        $exploded = explode(' ', $lists[0]);
         return $exploded[1];
     }
 
@@ -143,8 +156,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Add IP map entry
      * 
-     * @param mixed $ip 
-     * @param mixed $domain 
+     * @param mixed $ip     IP Address
+     * @param mixed $domain domain name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -163,8 +177,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Delete IP map entry
      * 
-     * @param mixed $ip 
-     * @param mixed $domain 
+     * @param mixed $ip     IP Address
+     * @param mixed $domain Domain Name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -186,7 +201,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * return sorted ip map list
      * 
      * @access public
-     * @throws Net_Vpopmaild_Exception
+     * @throws Net_Vpopmaild_Exception on failure
      * @return mixed ip map array on success
      */
     public function showIPMap()
@@ -197,12 +212,14 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
             throw new Net_Vpopmaild_Exception($status);
         }
         $lists = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $in    = $this->sockRead();
+        while (!$this->dotOnly($in) 
+                && !$this->statusOk($in) 
+                && !$this->statusErr($in)) {
             list($ip, $domain) = explode(' ', $in);
             if (!empty($lists[$ip])) {
-                $lists[$ip].= ", ".$domain;
-            } else { #  Not duplicate
+                $lists[$ip] .= ", ".$domain;
+            } else { // Not duplicate
                 $lists[$ip] = $domain;
             }
             $in = $this->sockRead();
@@ -216,45 +233,49 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Split .qmail file into an array.
      * 
-     * @param mixed $fileContents 
+     * @param mixed $fileContents file contents
+     *
      * @access public
      * @return array
      */
     public function dotQmailSplit($fileContents)
     {
-        $result = array('Comment' => array(), 'Program' => array(), 'Delivery' => array(), 'Forward' => array(),);
+        $result = array('Comment'  => array(),
+                        'Program'  => array(),
+                        'Delivery' => array(),
+                        'Forward'  => array(),);
         if (!is_array($fileContents)) {
             return $result;
         }
         reset($fileContents);
         while (list(, $line) = each($fileContents)) {
             switch ($line{0}) {
-                case '#':
-                    $result['Comment'][] = $line;
+            case '#':
+                $result['Comment'][] = $line;
                 break;
-                case '|':
-                    $result['Program'][] = $line;
+            case '|':
+                $result['Program'][] = $line;
                 break;
-                case '/':
-                    $result['Delivery'][] = $line;
+            case '/':
+                $result['Delivery'][] = $line;
                 break;
-                case '&':
-                default:
-                    $result['Forward'][] = $line;
+            case '&':
+            default:
+                $result['Forward'][] = $line;
                 break;
             }
         }
         return $result;
     }
 
-
     /**
      * robotDel 
      * 
      * Delete robot.
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
+     * @param mixed $domain domain name
+     * @param mixed $user   user name
+     *
      * @access public
      * @return bool true on success, false on failure
      */
@@ -265,32 +286,40 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
             $this->recordio($result);
             return false;
         }
-        $robotDir = strtoupper($user);
+        $robotDir     = strtoupper($user);
         $dotQmailName = ".qmail-$user";
 
         // Get domain directory for robotPath
         $domainArray = $this->domainInfo($domain);
-        $robotPath = $domainArray['path']."/$robotDir";
-        $result = $this->rmDir($robotPath);
-        $result = $this->rmFile($domain, '', $dotQmailName);
+        $robotPath   = $domainArray['path']."/$robotDir";
+        $result      = $this->rmDir($robotPath);
+        $result      = $this->rmFile($domain, '', $dotQmailName);
         return true;
     }
 
     /**
      * robotSet 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
-     * @param mixed $subject 
-     * @param mixed $message 
-     * @param mixed $forward 
-     * @param mixed $time 
-     * @param mixed $number 
+     * @param mixed $domain  domain name
+     * @param mixed $user    user name
+     * @param mixed $subject subject
+     * @param mixed $message message
+     * @param mixed $forward forward destination
+     * @param mixed $time    time
+     * @param mixed $number  number
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
      */
-    public function robotSet($domain, $user, $subject, $message, $forward, $time = '', $number = '')
+    public function robotSet(
+                        $domain,
+                        $user,
+                        $subject,
+                        $message,
+                        $forward,
+                        $time = '',
+                        $number = '')
     {
         if ($time == '') {
             $time = $this->vpopmailRobotTime;
@@ -298,7 +327,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         if ($number == '') {
             $number = $this->vpopmailRobotNumber;
         }
-        $robotDir = strtoupper($user);
+        $robotDir     = strtoupper($user);
         $dotQmailName = ".qmail-$user";
         if (!is_array($message)) {
             $message = explode("\n", $message);
@@ -306,11 +335,11 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
 
         // Get domain directory for robotPath
         $domainArray = $this->domainInfo($domain);
-        $robotPath = $domainArray['path']."/$robotDir";
+        $robotPath   = $domainArray['path']."/$robotDir";
 
         $messagePath = "$robotPath/message";
-        $program = $this->vpopmailRobotProgram;
-        #  Build the dot qmail file
+        $program     = $this->vpopmailRobotProgram;
+        // Build the dot qmail file
         $dotQmail = array("|$program $time $number $messagePath $robotPath");
         if (is_array($forward)) {
             array_merge($dotQmail, $forward);
@@ -319,8 +348,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         }
         $result = $this->writeFile($dotQmail, $domain, '', $dotQmailName);
         $result = $this->mkDir($domain, '', $robotDir);
-        #  NOTE:  You have to add them backwards!
-        array_unshift($message, "");
+        // NOTE:  You have to add them backwards!
+        array_unshift($message, '');
         array_unshift($message, "Subject: $subject");
         array_unshift($message, "From: $user@$domain");
         $result = $this->writeFile($message, $messagePath);
@@ -330,8 +359,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * robotGet 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
+     * @param mixed $domain domain name
+     * @param mixed $user   user name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return array robot on success
@@ -339,35 +369,41 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     public function robotGet($domain, $user)
     {
         $dotQmailName = ".qmail-$user";
-        $dotQmail = $this->readFile($domain, '', $dotQmailName);
+        $dotQmail     = $this->readFile($domain, '', $dotQmailName);
         if (!is_array($dotQmail)) {
             return $dotQmail;
         }
         $this->recordio("dotQmail: " . print_r($dotQmail, 1));
         $dotQmail = $this->dotQmailSplit($dotQmail);
         $this->recordio("dotQmaili split: " . print_r($dotQmail, 1));
-        if (count($dotQmail['Program']) > 1)  { #  Too many programs
-            throw new Net_Vpopmaild_Exception('-ERR 0 too many programs in robot dotqmail file');
+        if (count($dotQmail['Program']) > 1) {
+            //  Too many programs
+            throw new Net_Vpopmaild_Exception(
+                '-ERR 0 too many programs in robot dotqmail file');
         }
-        if (!preg_match("({$this->vpopmailRobotProgram})", $dotQmail['Program'][0])) {
-            throw new Net_Vpopmaild_Exception('-ERR 0 Mail Robot program not found');
+        if (!preg_match("({$this->vpopmailRobotProgram})",
+            $dotQmail['Program'][0])) {
+            throw new Net_Vpopmaild_Exception(
+                '-ERR 0 Mail Robot program not found');
         }
-        list($Program, $Time, $Number, $MessageFile, $RobotPath) = explode(' ', $dotQmail['Program'][0]);
+        list($Program, $Time, $Number, $MessageFile, $RobotPath) 
+            = explode(' ', $dotQmail['Program'][0]);
         $message = $this->readFile($MessageFile);
         if (!is_array($message)) {
-            throw new Net_Vpopmaild_Exception('-ERR 0 Unable to find message file - ' . $message);
+            throw new Net_Vpopmaild_Exception(
+                '-ERR 0 Unable to find message file - ' . $message);
         }
-        $result = array();
-        $result['Time'] = $Time;
+        $result           = array();
+        $result['Time']   = $Time;
         $result['Number'] = $Number;
-        array_shift($message); #   Eat From: address
+        array_shift($message); // Eat From: address
         $result['Subject'] = substr(array_shift($message), 9);
-        array_shift($message); #  eat blank line
-        if (0 == count($dotQmail['Forward'])) { #  Empty
+        array_shift($message); // eat blank line
+        if (0 == count($dotQmail['Forward'])) { // Empty
             $result['Forward'] = '';
-        } elseif (count($dotQmail['Forward']) > 1) { #  array
+        } elseif (count($dotQmail['Forward']) > 1) { // array
             $result['Forward'] = $dotQmail['Forward'];
-        } else { #  Single entry
+        } else { // Single entry
             $result['Forward'] = $dotQmail['Forward'][0];
         }
         $result['Message'] = $message;
@@ -378,8 +414,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * listLists 
      * 
-     * @param mixed $domain 
-     * @param string $user 
+     * @param mixed  $domain domain name
+     * @param string $user   user name optional
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return array lists array on success, error on failure
@@ -387,16 +424,18 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     public function listLists($domain, $user = '')
     {
         $basePath = $this->formatBasePath($domain, $user);
-        $status = $this->sockWrite("list_lists $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("list_lists $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
         $lists = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $in    = $this->sockRead();
+        while (!$this->dotOnly($in)
+                && !$this->statusOk($in)
+                && !$this->statusErr($in)) {
             $lists[] = $in;
-            $in = $this->sockRead();
+            $in      = $this->sockRead();
         }
         return $lists;
     }
@@ -404,24 +443,27 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * listAlias 
      * 
-     * @param mixed $domain 
-     * @param string $user 
+     * @param mixed  $domain domain name
+     * @param string $user   user name optional
+     *
      * @access public
      * @return alias array on success, null on failure
      */
     public function listAlias($domain, $user = '')
     {
         $basePath = $this->formatBasePath($domain, $user);
-        $status = $this->sockWrite("list_alias $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("list_alias $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             return null;
         }
         $alii = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $in   = $this->sockRead();
+        while (!$this->dotOnly($in)
+                && !$this->statusOk($in)
+                && !$this->statusErr($in)) {
             $alii[] = $in;
-            $in = $this->sockRead();
+            $in     = $this->sockRead();
         }
         return $this->aliasesToArray($alii);
     }
@@ -429,8 +471,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * removeAlias 
      * 
-     * @param mixed $alias 
-     * @param mixed $destination 
+     * @param mixed $alias       alias name
+     * @param mixed $destination destination address
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -448,7 +491,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * deleteAlias 
      * 
-     * @param mixed $alias 
+     * @param string $alias alias name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -466,8 +510,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * addAlias 
      * 
-     * @param mixed $alias 
-     * @param mixed $destination 
+     * @param mixed $alias       alias name
+     * @param mixed $destination destination address
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -485,7 +530,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * getLimits 
      * 
-     * @param mixed $domain 
+     * @param mixed $domain domain name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed array limits on success
@@ -505,8 +551,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * setLimits 
      * 
-     * @param mixed $domain 
-     * @param mixed $limits 
+     * @param string $domain domain name
+     * @param array  $limits domain limits
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true on success
@@ -552,14 +599,14 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         // string parms
         foreach ($stringParms as $name) {
             if (!empty($limits[$name])) {
-                $value = $limits[$name];
+                $value  = $limits[$name];
                 $status = $this->sockWrite("$name $value");
             }
         }
         // flag parms
         foreach ($flagParms as $name) {
             if (!empty($limits[$name])) {
-                $value = $limits[$name];
+                $value  = $limits[$name];
                 $status = $this->sockWrite("$name $value");
             }
         }
@@ -574,7 +621,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * delLimits 
      * 
-     * @param mixed $domain 
+     * @param mixed $domain domain name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -592,7 +640,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * domainInfo 
      * 
-     * @param mixed $domain 
+     * @param mixed $domain domain name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed dom_info array on success
@@ -600,7 +649,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     public function domainInfo($domain)
     {
         $out = $this->sockWrite("dom_info $domain");
-        $in = $this->sockRead();
+        $in  = $this->sockRead();
         if (!$this->statusOk($in)) {
             throw new Net_Vpopmaild_Exception($in);
         }
@@ -609,8 +658,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * listDomains 
      * 
-     * @param int $page 
-     * @param int $perPage 
+     * @param int $page    page number, default 0 (don't paginate)
+     * @param int $perPage domains per page, default 0 (don't paginate)
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed domains array on success
@@ -623,12 +673,14 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
             throw new Net_Vpopmaild_Exception($status);
         }
         $domains = array();
-        $list = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $list    = array();
+        $in      = $this->sockRead();
+        while (!$this->dotOnly($in)
+                && !$this->statusOk($in)
+                && !$this->statusErr($in)) {
             list($parent, $domain) = explode(' ', $in, 2);
-            $domains[$domain] = $parent;
-            $in = $this->sockRead();
+            $domains[$domain]      = $parent;
+            $in                    = $this->sockRead();
         }
         return $domains;
     }
@@ -657,8 +709,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * addDomain 
      * 
-     * @param mixed $domain 
-     * @param mixed $password 
+     * @param string $domain   domain name
+     * @param string $password password
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -676,8 +729,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * addAliasDomain 
      * 
-     * @param mixed $domain 
-     * @param mixed $alias 
+     * @param mixed $domain domain name
+     * @param mixed $alias  alias name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true on success
@@ -694,7 +748,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * delDomain 
      * 
-     * @param mixed $domain 
+     * @param mixed $domain domain name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true on success
@@ -714,8 +769,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * return page number that the domain occurs on
      * 
-     * @param mixed $domain 
-     * @param mixed $perPage 
+     * @param mixed $domain  domain name
+     * @param mixed $perPage domains per page
+     *
      * @access public
      * @return int page number on success, null on on failure
      */
@@ -736,9 +792,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * addUser 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
-     * @param mixed $password 
+     * @param string $domain   domain name
+     * @param string $user     user name
+     * @param string $password password
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true on success
@@ -756,8 +813,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * delUser 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
+     * @param string $domain domain name
+     * @param string $user   user name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -776,9 +834,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * modUser 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
-     * @param mixed $userInfo 
+     * @param string $domain   domain name
+     * @param string $user     user name
+     * @param array  $userInfo user info data
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true success
@@ -816,14 +875,14 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         }
         foreach ($stringParms as $name) {
             if (!empty($userInfo[$name])) {
-                $value = $userInfo[$name];
+                $value  = $userInfo[$name];
                 $status = $this->sockWrite("$name $value");
             }
         }
         foreach ($flagParms as $name) {
-            $flip = false;
-            $value = $this->getGidBit($userInfo['gidflags'], $name, $flip);
-            $value = ($value) ? '1' : '0';
+            $flip   = false;
+            $value  = $this->getGidBit($userInfo['gidflags'], $name, $flip);
+            $value  = ($value) ? '1' : '0';
             $status = $this->sockWrite("$name $value");
         }
         $status = $this->sockWrite(".");
@@ -836,8 +895,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * userInfo 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
+     * @param string $domain domain name
+     * @param string $user   user name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed user info array on success
@@ -855,9 +915,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * listUsers 
      * 
-     * @param mixed $domain 
-     * @param int $page 
-     * @param int $perPage 
+     * @param string $domain  domain name
+     * @param int    $page    page number
+     * @param int    $perPage domains per page
+     *
      * @access public
      * @return mixed users array on success, null on failure
      */
@@ -869,10 +930,12 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
             return null;
         }
 
-        $list = array();
         $this->recordio("<<--  Start collecting user data  -->>");
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $list = array();
+        $in   = $this->sockRead();
+        while (!$this->dotOnly($in)
+                && !$this->statusOk($in)
+                && !$this->statusErr($in)) {
             if (empty($in)) {
                 $in = $this->sockRead();
                 continue;
@@ -883,7 +946,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
                     $list[$currentName] = $user;
                 }
                 $currentName = $value;
-                $user = array();
+                $user        = array();
             } else {
                 $user[$name] = trim($value);
             }
@@ -898,7 +961,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * userCount 
      * 
-     * @param mixed $domain 
+     * @param string $domain domain name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return int count on success
@@ -920,8 +984,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * getLastAuth 
      * 
-     * @param mixed $domain 
-     * @param mixed $user 
+     * @param string $domain domain name
+     * @param string $user   user name
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return array('time' => (timestamp), 'ip' => IP (0.0.0.0 for none))
@@ -942,8 +1007,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * Authenticate user based on email and password
      * 
-     * @param mixed $email 
-     * @param mixed $password 
+     * @param string $email    email address
+     * @param string $password password
+     *
      * @access public
      * @return bool true on success, false on failure
      */
@@ -955,7 +1021,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
             return false;
         }
         // Easy way to access domain
-        $email_array = explode('@', $email);
+        $email_array               = explode('@', $email);
         $this->loginUser['domain'] = $email_array[1];
         return true;
     }
@@ -963,36 +1029,43 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * isSysAdmin 
      * 
-     * @param string $acct_info 
+     * @param string $loginUser user account info
+     *
      * @access public
      * @return bool result of $this->getGidBit()
      */
-    function isSysAdmin($acct_info = '') {
-        if ($acct_info == '') {
-            $acct_info = $this->loginUser;
+    function isSysAdmin($loginUser = null)
+    {
+        if (is_null($loginUser)) {
+            $loginUser = $this->loginUser;
         }
-        return $this->getGidBit($acct_info['gidflags'], 'system_admin_privileges');
+        return $this->getGidBit($loginUser['gidflags'], 'system_admin_privileges');
     }
-    /**
-     * Is Domain Admin
-     *
-     * Determin if this is a domain administrator for this domain
-     *
-     * @author Bill Shupp <hostmaster@shupp.org>
-     *
-     */
 
-    function isDomainAdmin($domain, $acct_info = '') {
-        if ($acct_info == '') {
-            $acct_info = $this->loginUser;
+    /**
+     * isDomainAdmin 
+     * 
+     * Determine if this is a domain administrator for this domain
+     * 
+     * @param mixed  $domain    domain name
+     * @param string $loginUser user account info
+     * 
+     * @access public
+     * @return void
+     */
+    function isDomainAdmin($domain, $loginUser = null)
+    {
+        if (is_null($loginUser)) {
+            $loginUser = $this->loginUser;
         }
-        if ($this->isSysAdmin($acct_info)) {
+        if ($this->isSysAdmin($loginUser)) {
             return true;
         }
-        if ($this->getGidBit($acct_info['gidflags'], 'domain_admin_privileges')) {
+        if ($this->getGidBit($loginUser['gidflags'], 'domain_admin_privileges')) {
             return true;
         }
-        if (($acct_info['name'] == 'postmaster') && $domain == $acct_info['domain']) {
+        if (($loginUser['name'] == 'postmaster')
+            && $domain == $loginUser['domain']) {
             return true;
         }
         return false;
@@ -1001,17 +1074,19 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * isUserAdmin 
      * 
-     * Determin if this user have privileges on this account.
+     * Determine if this user have privileges on this account.
      * Will not work if you did not authenticate using authenticate(),
      * as it relies on $this->loginUser['domain'] to be set.
      * 
-     * @param mixed $name 
-     * @param mixed $domain 
+     * @param string $name   user name
+     * @param string $domain domain name
+     *
      * @access public
      * @return void
      * @see authenticate()
      */
-    function isUserAdmin($name, $domain) {
+    function isUserAdmin($name, $domain)
+    {
         if ($this->isDomainAdmin($domain)) {
             return true;
         }
@@ -1022,11 +1097,13 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * getQuota 
      * 
-     * @param mixed $quota 
+     * @param string $quota quota string
+     *
      * @access public
      * @return string
      */
-    function getQuota($quota) {
+    function getQuota($quota)
+    {
         if (preg_match('/S$/', $quota)) {
             $quota = preg_replace('/S$/', '', $quota);
             $quota = $quota/1024;
@@ -1042,27 +1119,30 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * Looking for routing types standard, delete, or forward, with optional
      * saving of messages, as well as vacation messages.
      *
-     * @author Bill Shupp <hostmaster@shupp.org>
-     * @param mixed $contents 
-     * @param mixed $account_info 
+     * @param mixed $contents     .qmail contents
+     * @param mixed $account_info user account info
+     *
      * @access public
      * @return array $defaults
      */
-    function parseHomeDotqmail($contents, $account_info) {
-        $is_standard = false;
-        $is_deleted = false;
+    function parseHomeDotqmail($contents, $account_info)
+    {
+        $is_standard  = false;
+        $is_deleted   = false;
         $is_forwarded = false;
         // Set default template settings
-        $defaults['comment'] = $account_info['comment'];
-        $defaults['forward'] = '';
-        $defaults['save_a_copy'] = '';
-        $defaults['vacation'] = '';
+        $defaults['comment']          = $account_info['comment'];
+        $defaults['forward']          = '';
+        $defaults['save_a_copy']      = '';
+        $defaults['vacation']         = '';
         $defaults['vacation_subject'] = '';
-        $defaults['vacation_body'] = '';
+        $defaults['vacation_body']    = '';
         if (empty($contents)) {
             $is_standard = true;
         }
-        if ((is_array($contents) && count($contents) == 1 && $contents[0] == '# delete')) {
+        if ((is_array($contents)
+            && count($contents) == 1
+            && $contents[0] == '# delete')) {
             $is_deleted = true;
         }
         if ($is_standard) {
@@ -1072,19 +1152,24 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         } else {
             // now let's parse it
             while (list($key, $val) = each($contents)) {
-                if ($val == $account_info['user_dir'].'/Maildir/' || $val == './Maildir/') {
+                if ($val == $account_info['user_dir'].'/Maildir/'
+                    || $val == './Maildir/') {
+
                     $defaults['save_a_copy'] = ' checked';
                     continue;
                 }
                 if (preg_match("({$this->vpopmailRobotProgram})", $val)) {
                     $vacation_array = $this->getVacation($val, $account_info);
+
                     while (list($vacKey, $vacVal) = each($vacation_array)) {
                         $defaults[$vacKey] = $vacVal;
                     }
                     continue;
                 } else {
-                    if (Validate::email(preg_replace('/^&/', '', $val), array('use_rfc822' => 1))) {
-                        $is_forwarded = true;
+                    if (Validate::email(preg_replace('/^&/', '', $val),
+                        array('use_rfc822' => 1))) {
+
+                        $is_forwarded        = true;
                         $defaults['routing'] = 'routing_forwarded';
                         $defaults['forward'] = preg_replace('/^&/', '', $val);
                     }
@@ -1102,19 +1187,21 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      *
      * Parse .qmail line contents to get message subject and meessage body
      *
-     * @author Bill Shupp <hostmaster@shupp.org>
-     * @param string $line 
-     * @param mixed $user_info 
+     * @param array  $user_info user info
+     * @param string $line      .qmail line with path to vacation message.
+     * defaults to ''
+     *
      * @access public
      * @return mixed vacation array on success, null on failure
      */
-    public function getVacation($line = '', $user_info) {
+    public function getVacation($user_info, $line = '')
+    {
         if ($line == '') {
             $path = $user_info['user_dir'].'/vacation/message';
         } else {
-            $line = preg_replace('/^[|][ ]*/', '', $line);
+            $line  = preg_replace('/^[|][ ]*/', '', $line);
             $array = explode(' ', $line);
-            $path = $array[3];
+            $path  = $array[3];
         }
         try {
             $contents = $this->readFile($path);
@@ -1124,9 +1211,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         if (!is_array($contents)) {
             return null;
         }
-        array_shift($contents); #   Eat From: address
+        array_shift($contents); // Eat From: address
         $subject = substr(array_shift($contents), 9);
-        array_shift($contents); #  eat blank line
+        array_shift($contents); // Eat blank line
         return array(   'vacation_subject' => $subject,
                         'vacation_body' => implode("\n", $contents),
                         'vacation' => ' checked');
@@ -1134,18 +1221,24 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * setVacation 
      * 
-     * @param mixed $user 
-     * @param mixed $domain 
-     * @param mixed $subject 
-     * @param mixed $message 
-     * @param string $vacationDir = 'vacation'
+     * @param string $user        user name
+     * @param string $domain      domain name
+     * @param string $subject     subject line
+     * @param string $message     message contents
+     * @param string $vacationDir vacation directory name, 
+     * defaults to 'vacation'
+     *
      * @access public
      * @return void
      */
-    public function setVacation($user, $domain, $subject, $message, $vacationDir = 'vacation')
+    public function setVacation($user,
+                                $domain,
+                                $subject,
+                                $message,
+                                $vacationDir = 'vacation')
     {
         $messageFile = $vacationDir . '/message';
-        $contents = array( "From: $user@$domain",
+        $contents    = array( "From: $user@$domain",
                             "Subject: $subject",
                             '',
                             $message);
@@ -1162,9 +1255,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * delVacation 
      * 
-     * @param mixed $user 
-     * @param mixed $domain 
-     * @param string $vacationDir 
+     * @param string $user        user name
+     * @param string $domain      domain name
+     * @param string $vacationDir vacation directory name, defaults to 'vacation'
+     *
      * @access public
      * @return true on success, false on failure
      */
@@ -1176,18 +1270,21 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * getAliasContents 
      * 
-     * @param mixed $contentsArray 
+     * @param mixed $contentsArray alias contents
+     *
      * @access public
      * @return string
      */
-    public function getAliasContents($contentsArray) {
-        $count = 0;
+    public function getAliasContents($contentsArray)
+    {
+        $count  = 0;
         $string = '';
+
         while (list($key, $val) = each($contentsArray)) {
             if ($count > 0) {
-                $string.= ', ';
+                $string .= ', ';
             }
-            $string.= preg_replace('/^&/', '', $val);
+            $string .= preg_replace('/^&/', '', $val);
             $count++;
         }
         return $string;
@@ -1199,13 +1296,16 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * take raw ListAlias output, and format into 
      * associative arrays
      * 
-     * @param mixed $aliasArray 
+     * @param array $aliasArray aliases
+     * 
      * @access protected
      * @return array of aliases
      */
-    protected function aliasesToArray($aliasArray) {
+    protected function aliasesToArray($aliasArray)
+    {
         // generate unique list of aliases
         $aliasList = array();
+
         while (list($key, $val) = each($aliasArray)) {
             $alias = preg_replace('/(^[^ ]+) .*$/', '$1', $val);
             if (!in_array($alias, $aliasList)) {
@@ -1218,10 +1318,11 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
         while (list($key, $val) = each($aliasList)) {
             reset($aliasArray);
             $count = 0;
+
             while (list($lkey, $lval) = each($aliasArray)) {
                 if (preg_match("/^$val /", $lval)) {
-                    $aliasLine = preg_replace('/^[^ ]+ (.*$)/', '$1', $lval);
-                    $contentArray[$val][$count] = $aliasLine;
+                    $contentArray[$val][$count] = 
+                        preg_replace('/^[^ ]+ (.*$)/', '$1', $lval);
                     $count++;
                 }
             }
@@ -1232,26 +1333,29 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
     /**
      * displayForwardLine
      *
-     * @param mixed $line
+     * @param string $line forward line
+     *
      * @access public
      * @return parsed string
      */
-    function displayForwardLine($line) {
+    function displayForwardLine($line)
+    {
         return preg_replace('/^&/', '', $line);
     }
-
 
     /**
      * parseAliases 
      * 
      * Return correct type of aliases - forwards, responders, or lists (ezmlm)
      * 
-     * @param mixed $in_array 
-     * @param mixed $type 
+     * @param array  $in_array aliases array
+     * @param string $type     type to look for (forwards, responders, lists)
+     * 
      * @access public
      * @return array of parsed aliases
      */
-    public function parseAliases($in_array, $type) {
+    public function parseAliases($in_array, $type)
+    {
         $out_array = array();
         foreach ($in_array as $parentkey => $parentval) {
             $is_type = 'forwards';
@@ -1277,16 +1381,19 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base {
      * 
      * A simple function to paginate an array.  Could probably be better.
      * 
-     * @param mixed $array 
-     * @param mixed $page 
-     * @param mixed $limit 
+     * @param array $array array to paginate
+     * @param int   $page  page to get
+     * @param int   $limit limit
+     * 
      * @access public
      * @return array
      */
-    public function paginateArray($array, $page, $limit) {
-        $page_count = 1;
+    public function paginateArray($array, $page, $limit)
+    {
+        $page_count  = 1;
         $limit_count = 1;
-        $out_array = array();
+        $out_array   = array();
+
         while ((list($key, $val) = each($array)) && $page_count <= $page) {
             if ($page_count == $page) {
                 $out_array[$key] = $val;
