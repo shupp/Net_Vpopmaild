@@ -3,36 +3,41 @@
 /**
  * Net_Vpopmaild_Base
  * 
- * @package Net_Vpopmaild
+ * PHP Version 5
+ * 
  * @category Net
- * @author Bill Shupp <hostmaster@shupp.org> 
- * @author Rick Widmer
- * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @todo Finish ezmlm functions, waiting on vpopmaild updates
- * @todo Do not rely on PHP4 packages
- * @todo Robot creation - check for existing accounts first?  or 
+ * @package  Net_Vpopmaild
+ * @author   Bill Shupp <hostmaster@shupp.org> 
+ * @author   Rick Widmer <vchkpw@developersdesk.com>
+ * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @link     http://shupp.org/Net_Vpopmaild
+ * @todo     Finish ezmlm functions, waiting on vpopmaild updates
+ * @todo     Do not rely on PHP4 packages
+ * @todo     Robot creation - check for existing accounts first?  or 
  * is it an issue with OS X fs, or vpopmaild?
- * @todo allow readInfo() to support mutlitple items/arrays for listUsers()
- * @todo getQuota() should support maildir++ completely (file count: C)
+ * @todo     allow readInfo() to support mutlitple items/arrays for listUsers()
+ * @todo     getQuota() should support maildir++ completely (file count: C)
  */
 
-require_once('Net/Socket.php');
-require_once('Log.php');
-require_once('Net/Vpopmaild/Exception.php');
-require_once('Net/Vpopmaild/FatalException.php');
+require_once 'Net/Socket.php';
+require_once 'Log.php';
+require_once 'Net/Vpopmaild/Exception.php';
+require_once 'Net/Vpopmaild/FatalException.php';
 
 /**
  * Net_Vpopmaild_Base
  * 
  * A class for talking to vpopmaild
  * 
- * @package Net_Vpopmaild
  * @category Net
- * @author Bill Shupp <hostmaster@shupp.org> 
- * @author Rick Widmer
- * @license PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @package  Net_Vpopmaild
+ * @author   Bill Shupp <hostmaster@shupp.org> 
+ * @author   Rick Widmer <vchkpw@developersdesk.com>
+ * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
+ * @link     http://shupp.org/Net_Vpopmaild
  */
-class Net_Vpopmaild_Base {
+class Net_Vpopmaild_Base
+{
 
     private $socket = null;
     /**
@@ -187,8 +192,10 @@ class Net_Vpopmaild_Base {
      * Set {@link $debug} (1 by default).
      * Call this to set {@link $debug} to 1 and enable logging.
      * 
-     * @param bool $value 
-     * @param string $logFile path to local log file, defaults to '/tmp/vpopmaild.log'
+     * @param bool   $value   defaults to true to enable debugging
+     * @param string $logFile path to local log file, defaults 
+     * to '/tmp/vpopmaild.log'
+     *
      * @access public
      * @return void
      */
@@ -210,7 +217,8 @@ class Net_Vpopmaild_Base {
      * 
      * Assign {@link $log} an external instance of Log
      * 
-     * @var object $log 
+     * @param object &$log instance of Log
+     *
      * @access public
      * @return void
      */
@@ -226,9 +234,10 @@ class Net_Vpopmaild_Base {
      * 
      * Make a connection to vpopmaild
      * 
-     * @param string $address 
-     * @param int $port 
-     * @param int $timeout 
+     * @param string $address defaults to 'localhost'
+     * @param int    $port    defaults to 89
+     * @param int    $timeout defaults to 30 (seconds)
+     *
      * @access public
      * @throws Net_Vpopmaild_FatalException if connection or initial status fails
      * @return void
@@ -240,7 +249,7 @@ class Net_Vpopmaild_Base {
             throw new Net_Vpopmaild_FatalException($result);
         }
         $this->connected = true;
-        $in = $this->sockRead();
+        $in              = $this->sockRead();
         if (!$this->statusOk($in)) {
             throw new Net_Vpopmaild_Exception("Error: initial status: $in");
         }
@@ -252,7 +261,8 @@ class Net_Vpopmaild_Base {
      * 
      * Record i/o to {@link $log}
      * 
-     * @param string $data 
+     * @param string $data data to be logged
+     *
      * @access public
      * @return void
      */
@@ -268,7 +278,8 @@ class Net_Vpopmaild_Base {
      * 
      *  $data contains +OK
      * 
-     * @param string $data 
+     * @param string $data string to be checked
+     *
      * @access private
      * @return true on success, false on failure
      */
@@ -286,7 +297,8 @@ class Net_Vpopmaild_Base {
      *  $data is is exactly +OK+
      *  (more to come)
      * 
-     * @param string $data 
+     * @param string $data string to be checked
+     *
      * @access private
      * @return true on success, false on failure
      */
@@ -303,7 +315,8 @@ class Net_Vpopmaild_Base {
      * 
      * $data is exactly +OK
      * 
-     * @param string $data 
+     * @param string $data string to be checked
+     *
      * @access private
      * @return true on success, false on failure
      */
@@ -320,7 +333,8 @@ class Net_Vpopmaild_Base {
      * 
      * $data starts with "-ERR "
      * 
-     * @param string $data 
+     * @param string $data string to be checked
+     *
      * @access private
      * @return true on success, false on failure
      */
@@ -337,7 +351,8 @@ class Net_Vpopmaild_Base {
      * 
      * $data is exactly "."
      * 
-     * @param string $data 
+     * @param string $data string to be checked
+     *
      * @access private
      * @return true on success, false on failure
      */
@@ -354,10 +369,12 @@ class Net_Vpopmaild_Base {
      * 
      * Write $data to socket
      * 
-     * @param mixed $data 
+     * @param string $data string to be checked
+     *
      * @access private
      * @return mixed
-     * @throws Net_Vpopmaild_FatalException if Net_Socket::writeLine() returns PEAR_Error
+     * @throws Net_Vpopmaild_FatalException if Net_Socket::writeLine() 
+     * returns PEAR_Error
      */
     protected function sockWrite($data)
     {
@@ -376,7 +393,8 @@ class Net_Vpopmaild_Base {
      * 
      * @access private
      * @return string line
-     * @throws Net_Vpopmaild_FatalException if Net_Socket::readLine() returns PEAR_Error
+     * @throws Net_Vpopmaild_FatalException if Net_Socket::readLine() 
+     * returns PEAR_Error
      */
     protected function sockRead()
     {
@@ -394,7 +412,6 @@ class Net_Vpopmaild_Base {
      * send quit command to vpopmaild.
      * Called by {@link __destruct()}
      * 
-     * 
      * @access public
      * @return void
      */
@@ -407,24 +424,28 @@ class Net_Vpopmaild_Base {
     /**
      * formatBasePath 
      * 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
-     * @param string $type 
+     * @param mixed  $domain domain name required
+     * @param string $user   optional user name
+     * @param string $path   optional filename path
+     * @param string $type   type file or directory, defaults to 'file'
+     *
      * @access private
      * @return var $basePath
      */
-    protected function formatBasePath($domain, $user = '', $path = '', $type = 'file')
+    protected function formatBasePath($domain,
+                                      $user = '',
+                                      $path = '', 
+                                      $type = 'file')
     {
         $basePath = $domain;
         if (!empty($user)) {
-            $basePath  = "$user@$basePath";
+            $basePath = "$user@$basePath";
         }
         if (!empty($path)) {
             $basePath .= "/" . $path;
         }
         if ($type == 'dir') {
-            $basePath.= '/';
+            $basePath .= '/';
         }
         $basePath = preg_replace('/\/\//', '/', $basePath);
         return $basePath;
@@ -442,14 +463,16 @@ class Net_Vpopmaild_Base {
     {
         $this->recordio("<<--  Start readInfo  -->>");
         $infoArray = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $in        = $this->sockRead();
+        while (!$this->dotOnly($in) 
+                    && !$this->statusOk($in) 
+                    && !$this->statusErr($in)) {
             $this->recordio("<<--  Start readInfo  -->>");
             if ($in != '') {
                 unset($value);
                 list($name, $value) = explode(' ', $in, 2);
-                $value = trim($value);
-                $infoArray[$name] = $value;
+                $value              = trim($value);
+                $infoArray[$name]   = $value;
             }
             $in = $this->sockRead();
         }
@@ -462,9 +485,10 @@ class Net_Vpopmaild_Base {
     /**
      * rmFile 
      * 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
+     * @param mixed  $domain domain name, required
+     * @param string $user   optional user name
+     * @param string $path   optional path
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true on success
@@ -472,8 +496,8 @@ class Net_Vpopmaild_Base {
     public function rmFile($domain, $user = '', $path = '')
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
-        $status = $this->sockWrite("rm_file $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("rm_file $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
@@ -483,10 +507,11 @@ class Net_Vpopmaild_Base {
     /**
      * writeFile 
      * 
-     * @param mixed $contents 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
+     * @param mixed  $contents file contents
+     * @param mixed  $domain   domain name
+     * @param string $user     optional user name
+     * @param string $path     optional path
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return true on success
@@ -497,7 +522,7 @@ class Net_Vpopmaild_Base {
             throw new Net_Vpopmaild_Exception('$contents argument must be an array');
         }
         $basePath = $this->formatBasePath($domain, $user, $path);
-        $status = $this->sockWrite("write_file $basePath");
+        $status   = $this->sockWrite("write_file $basePath");
         reset($contents);
         while (list(, $line) = each($contents)) {
             $status = $this->sockWrite($line);
@@ -513,9 +538,10 @@ class Net_Vpopmaild_Base {
     /**
      * readFile 
      * 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
+     * @param mixed  $domain domain name
+     * @param string $user   optional username
+     * @param string $path   optional path
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed file contents as array on success
@@ -523,16 +549,18 @@ class Net_Vpopmaild_Base {
     public function readFile($domain, $user = '', $path = '')
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
-        $status = $this->sockWrite("read_file $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("read_file $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
         $fileContents = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
+        $in           = $this->sockRead();
+        while (!$this->dotOnly($in) 
+                && !$this->statusOk($in) 
+                && !$this->statusErr($in)) {
             $fileContents[] = $in;
-            $in = $this->sockRead();
+            $in             = $this->sockRead();
         }
         return $fileContents;
     }
@@ -540,9 +568,10 @@ class Net_Vpopmaild_Base {
     /**
      * listDir 
      * 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
+     * @param mixed  $domain domain name
+     * @param string $user   optional user name
+     * @param string $path   optional path
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return array of directory contents on success
@@ -550,17 +579,19 @@ class Net_Vpopmaild_Base {
     public function listDir($domain, $user = '', $path = '')
     {
         $basePath = $this->formatBasePath($domain, $user, $path, 'dir');
-        $status = $this->sockWrite("list_dir $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("list_dir $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
         $directoryContents = array();
-        $in = $this->sockRead();
-        while (!$this->dotOnly($in) && !$this->statusOk($in) && !$this->statusErr($in)) {
-            list($dirName, $type) = explode(' ', $in);
+        $in                = $this->sockRead();
+        while (!$this->dotOnly($in) 
+                && !$this->statusOk($in) 
+                && !$this->statusErr($in)) {
+            list($dirName, $type)        = explode(' ', $in);
             $directoryContents[$dirName] = $type;
-            $in = $this->sockRead();
+            $in                          = $this->sockRead();
         }
         ksort($directoryContents);
         return $directoryContents;
@@ -568,9 +599,10 @@ class Net_Vpopmaild_Base {
     /**
      * rmDir 
      * 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
+     * @param mixed  $domain domain name
+     * @param string $user   optional user name
+     * @param string $path   optional path name
+     *
      * @access public
      * @throws new Net_Vpopmaild_Excpetion on failure
      * @return bool true on success
@@ -578,8 +610,8 @@ class Net_Vpopmaild_Base {
     public function rmDir($domain, $user = '', $path = '')
     {
         $basePath = $this->formatBasePath($domain, $user, $path);
-        $status = $this->sockWrite("rm_dir $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("rm_dir $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
@@ -590,9 +622,10 @@ class Net_Vpopmaild_Base {
     /**
      * mkDir 
      * 
-     * @param mixed $domain 
-     * @param string $user 
-     * @param string $path 
+     * @param mixed  $domain domain name
+     * @param string $user   optional user name
+     * @param string $path   optional path
+     *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return mixed true on success
@@ -600,8 +633,8 @@ class Net_Vpopmaild_Base {
     public function mkDir($domain, $user = '', $path = '')
     {
         $basePath = $this->formatBasePath($domain, $user, $path, 'dir');
-        $status = $this->sockWrite("mk_dir $basePath");
-        $status = $this->sockRead();
+        $status   = $this->sockWrite("mk_dir $basePath");
+        $status   = $this->sockRead();
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
