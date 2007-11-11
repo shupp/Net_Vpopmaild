@@ -7,7 +7,7 @@ require_once('tests-config.php');
 
 $vp->clogin($sysadminEmail, $sysadminPass);
 $vp->setVacation($user, $domain, $vacationSubject, $vacationMessage);
-$vacation = $vp->getVacation('', $vp->loginUser);
+$vacation = $vp->getVacation($vp->loginUser);
 var_dump($vacation['vacation_subject'] == $vacationSubject);
 var_dump($vacation['vacation_body'] == $vacationMessage);
 var_dump($vacation['vacation'] == ' checked');
