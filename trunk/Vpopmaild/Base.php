@@ -23,6 +23,7 @@ require_once 'Net/Socket.php';
 require_once 'Log.php';
 require_once 'Net/Vpopmaild/Exception.php';
 require_once 'Net/Vpopmaild/FatalException.php';
+require_once 'System.php';
 
 /**
  * Net_Vpopmaild_Base
@@ -194,17 +195,21 @@ class Net_Vpopmaild_Base
      * 
      * @param bool   $value   defaults to true to enable debugging
      * @param string $logFile path to local log file, defaults 
-     * to '/tmp/vpopmaild.log'
+     * to System::tmpdir() . PATH_SEPARATOR . 'vpopmaild.log'
+     * (/tmp/vpopmaild.log on Unix, for example)
      *
      * @access public
      * @return void
      */
-    public function setDebug($value = true, $logFile = '/tmp/vpopmaild.log')
+    public function setDebug($value = true, $logFile = null)
     {
         // Set debug value
         $this->debug = (bool)$value;
         // Instantiate Log object if necessary
         if ($this->debug && is_null($this->log)) {
+            if (is_null($logFile)) {
+                $system = System::tmpdir() . PATH_SEPARATOR . 'vpopmaild.log';;
+            }
             $this->log = Log::factory('file', $logFile);
             if (is_null($this->log)) {
                 throw new Net_Vpopmaild_Exception("Error creating Log object");
