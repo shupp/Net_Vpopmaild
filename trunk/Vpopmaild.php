@@ -20,6 +20,7 @@
  */
 
 require_once 'Validate.php';
+require_once 'Net/Vpopmaild/Base.php';
 require_once 'Net/Vpopmaild/Exception.php';
 require_once 'Net/Vpopmaild/FatalException.php';
 
@@ -1159,7 +1160,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
                     continue;
                 }
                 if (preg_match("({$this->vpopmailRobotProgram})", $val)) {
-                    $vacation_array = $this->getVacation($val, $account_info);
+                    $vacation_array = $this->getVacation($account_info, $val);
 
                     while (list($vacKey, $vacVal) = each($vacation_array)) {
                         $defaults[$vacKey] = $vacVal;
