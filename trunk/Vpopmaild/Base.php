@@ -11,12 +11,8 @@
  * @author   Rick Widmer <vchkpw@developersdesk.com>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
  * @link     http://shupp.org/Net_Vpopmaild
- * @todo     Finish ezmlm functions, waiting on vpopmaild updates
  * @todo     Do not rely on PHP4 packages
- * @todo     Robot creation - check for existing accounts first?  or 
- * is it an issue with OS X fs, or vpopmaild?
  * @todo     allow readInfo() to support mutlitple items/arrays for listUsers()
- * @todo     getQuota() should support maildir++ completely (file count: C)
  */
 
 require_once 'Net/Socket.php';
@@ -28,7 +24,9 @@ require_once 'System.php';
 /**
  * Net_Vpopmaild_Base
  * 
- * A class for talking to vpopmaild
+ * Base class for Net_Vpopmaild.  This class provides the network
+ * network connection, status checking methods, and some general
+ * helper methods used.
  * 
  * @category Net
  * @package  Net_Vpopmaild
@@ -177,7 +175,7 @@ class Net_Vpopmaild_Base
     /**
      * __construct 
      * 
-     * Create socket.
+     * Instantiate Net_Socket.
      * 
      * @access public
      * @return void
@@ -190,8 +188,8 @@ class Net_Vpopmaild_Base
     /**
      * setDebug 
      * 
-     * Set {@link $debug} (1 by default).
-     * Call this to set {@link $debug} to 1 and enable logging.
+     * Set {@link $debug} (true by default).
+     * Call this to set {@link $debug} to true and enable logging.
      * 
      * @param bool   $value   defaults to true to enable debugging
      * @param string $logFile path to local log file, defaults 
@@ -237,7 +235,7 @@ class Net_Vpopmaild_Base
     /**
      * connect 
      * 
-     * Make a connection to vpopmaild
+     * Make a connection to vpopmaild using Net_Socket::connect().
      * 
      * @param string $address defaults to 'localhost'
      * @param int    $port    defaults to 89
@@ -264,7 +262,8 @@ class Net_Vpopmaild_Base
     /**
      * recordio 
      * 
-     * Record i/o to {@link $log}
+     * Record i/o to {@link $log}.  Only logs if $this->debug
+     * is set to true.
      * 
      * @param string $data data to be logged
      *
@@ -281,7 +280,7 @@ class Net_Vpopmaild_Base
     /**
      * statusOk 
      * 
-     *  $data contains +OK
+     * Return status method.  Verifies that $data contains +OK
      * 
      * @param string $data string to be checked
      *
@@ -299,8 +298,8 @@ class Net_Vpopmaild_Base
     /**
      * statusOkMore 
      * 
-     *  $data is is exactly +OK+
-     *  (more to come)
+     * Return status method.  Verifies that $data is is exactly +OK+
+     * (more to come)
      * 
      * @param string $data string to be checked
      *
@@ -318,7 +317,7 @@ class Net_Vpopmaild_Base
     /**
      * statusOkNoMore 
      * 
-     * $data is exactly +OK
+     * Return status method.  Verifies that $data is exactly +OK
      * 
      * @param string $data string to be checked
      *
@@ -336,7 +335,7 @@ class Net_Vpopmaild_Base
     /**
      * statusErr 
      * 
-     * $data starts with "-ERR "
+     * Return status method.  Verifies that $data starts with "-ERR "
      * 
      * @param string $data string to be checked
      *
@@ -354,7 +353,7 @@ class Net_Vpopmaild_Base
     /**
      * dotOnly 
      * 
-     * $data is exactly "."
+     * Return status method.  Verifies that $data is exactly "."
      * 
      * @param string $data string to be checked
      *
@@ -372,7 +371,7 @@ class Net_Vpopmaild_Base
     /**
      * sockWrite 
      * 
-     * Write $data to socket
+     * Write $data to socket.  Uses Net_Socket::writeLine().
      * 
      * @param string $data string to be checked
      *
@@ -394,7 +393,7 @@ class Net_Vpopmaild_Base
     /**
      * sockRead 
      * 
-     * Read line from socket
+     * Read line from socket.  Uses Net_Socket::readLine().
      * 
      * @access private
      * @return string line
@@ -414,8 +413,7 @@ class Net_Vpopmaild_Base
     /**
      * quit 
      * 
-     * send quit command to vpopmaild.
-     * Called by {@link __destruct()}
+     * Send quit command to vpopmaild.  Called by {@link __destruct()}
      * 
      * @access public
      * @return void
@@ -428,6 +426,8 @@ class Net_Vpopmaild_Base
 
     /**
      * formatBasePath 
+     * 
+     * Format file/directory paths into user@domain/path.
      * 
      * @param mixed  $domain domain name required
      * @param string $user   optional user name
@@ -490,6 +490,8 @@ class Net_Vpopmaild_Base
     /**
      * rmFile 
      * 
+     * Remove a file.
+     * 
      * @param mixed  $domain domain name, required
      * @param string $user   optional user name
      * @param string $path   optional path
@@ -511,6 +513,8 @@ class Net_Vpopmaild_Base
 
     /**
      * writeFile 
+     * 
+     * Write a file.
      * 
      * @param mixed  $contents file contents
      * @param mixed  $domain   domain name
@@ -543,6 +547,8 @@ class Net_Vpopmaild_Base
     /**
      * readFile 
      * 
+     * Read a file and return the contents as an array.
+     * 
      * @param mixed  $domain domain name
      * @param string $user   optional username
      * @param string $path   optional path
@@ -572,6 +578,8 @@ class Net_Vpopmaild_Base
 
     /**
      * listDir 
+     * 
+     * List a directory and return the contents as an array.
      * 
      * @param mixed  $domain domain name
      * @param string $user   optional user name
@@ -604,6 +612,8 @@ class Net_Vpopmaild_Base
     /**
      * rmDir 
      * 
+     * Remove a directory.
+     * 
      * @param mixed  $domain domain name
      * @param string $user   optional user name
      * @param string $path   optional path name
@@ -626,6 +636,8 @@ class Net_Vpopmaild_Base
 
     /**
      * mkDir 
+     * 
+     * Create a directory.
      * 
      * @param mixed  $domain domain name
      * @param string $user   optional user name

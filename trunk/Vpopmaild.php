@@ -12,14 +12,11 @@
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
  * @link     http://shupp.org/Net_Vpopmaild
  * @todo Finish ezmlm functions, waiting on vpopmaild updates
- * @todo Do not rely on PHP4 packages
  * @todo Robot creation - check for existing accounts first?  or 
  * is it an issue with OS X fs, or vpopmaild?
- * @todo allow readInfo() to support mutlitple items/arrays for listUsers()
  * @todo getQuota() should support maildir++ completely (file count: C)
  */
 
-require_once 'Validate.php';
 require_once 'Net/Vpopmaild/Base.php';
 require_once 'Net/Vpopmaild/Exception.php';
 require_once 'Net/Vpopmaild/FatalException.php';
@@ -27,7 +24,9 @@ require_once 'Net/Vpopmaild/FatalException.php';
 /**
  * Net_Vpopmaild 
  * 
- * A class for talking to vpopmaild
+ * A package for talking to vpopmaild over tcp/ip sockets.  
+ * {@link http://vpopmail.sf.net/ Vpopmail} is a Virtual Mail add-on 
+ * package for qmail and postfix.
  * 
  * @category Net
  * @package  Net_Vpopmaild
@@ -65,7 +64,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * getGidBit 
      * 
-     * Get gid bit flag.
+     * Get gid bit flag value.
      * 
      * @param mixed $bitmap bitmap
      * @param mixed $bit    bit flag
@@ -92,7 +91,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * setGidBit 
      * 
-     * Set gid bit flag.
+     * Set gid bit flag value.
      * 
      * @param mixed &$bitmap bitmap to set
      * @param mixed $bit     bit flag
@@ -122,9 +121,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * getIPMap 
      * 
-     * Get IP Map entry
+     * Get IP Map entry.  Requires vpopmail to have IP Alias 
+     * Domains support compiled in.
      * 
-     * @param string $ip IP Address
+     * @param string $ip ip address
      *
      * @access public
      * @return string domain on success, null on failure
@@ -155,9 +155,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * addIPMap 
      * 
-     * Add IP map entry
+     * Add IP Map entry.  Requires vpopmail to have IP Alias 
+     * Domains support compiled in.
      * 
-     * @param mixed $ip     IP Address
+     * @param mixed $ip     ip address
      * @param mixed $domain domain name
      *
      * @access public
@@ -176,10 +177,11 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * delIPMap 
      * 
-     * Delete IP map entry
+     * Delete IP Map entry.  Requires vpopmail to have IP Alias 
+     * Domains support compiled in.
      * 
-     * @param mixed $ip     IP Address
-     * @param mixed $domain Domain Name
+     * @param mixed $ip     ip address
+     * @param mixed $domain domain name
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
@@ -197,7 +199,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * showIPMap 
      * 
-     * List all IP map entries.
+     * List all IP map entries.  Requires vpopmail to have IP 
+     * Alias Domains support compiled in.
      * 
      * return sorted ip map list
      * 
@@ -272,7 +275,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * robotDel 
      * 
-     * Delete robot.
+     * Delete mail robot.
      * 
      * @param mixed $domain domain name
      * @param mixed $user   user name
@@ -300,6 +303,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * robotSet 
+     * 
+     * Set mail robot.
      * 
      * @param mixed $domain  domain name
      * @param mixed $user    user name
@@ -360,6 +365,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * robotGet 
      * 
+     * Get mail robot values.
+     * 
      * @param mixed $domain domain name
      * @param mixed $user   user name
      *
@@ -415,6 +422,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * listLists 
      * 
+     * List ezmlm mailing lists.
+     * 
      * @param mixed  $domain domain name
      * @param string $user   user name optional
      *
@@ -444,6 +453,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * listAlias 
      * 
+     * List aliases.  You can list all aliases for a domain
+     * or just the alias that matches the optional user 
+     * argument.
+     * 
      * @param mixed  $domain domain name
      * @param string $user   user name optional
      *
@@ -472,6 +485,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * removeAlias 
      * 
+     * Remove destination from alias.
+     * 
      * @param mixed $alias       alias name
      * @param mixed $destination destination address
      *
@@ -492,6 +507,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * deleteAlias 
      * 
+     * Completely delete an alias.
+     * 
      * @param string $alias alias name
      *
      * @access public
@@ -510,6 +527,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * addAlias 
+     * 
+     * Add alias destination.
      * 
      * @param mixed $alias       alias name
      * @param mixed $destination destination address
@@ -531,11 +550,13 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * getLimits 
      * 
+     * Get vlimits for a domain.
+     * 
      * @param mixed $domain domain name
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed array limits on success
+     * @return array limits array on success
      */
     public function getLimits($domain)
     {
@@ -551,6 +572,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * setLimits 
+     * 
+     * Set vlimits for a domain.
      * 
      * @param string $domain domain name
      * @param array  $limits domain limits
@@ -622,6 +645,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * delLimits 
      * 
+     * Delete vlimits on a domain.
+     * 
      * @param mixed $domain domain name
      *
      * @access public
@@ -641,6 +666,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * domainInfo 
      * 
+     * Get domain info.
+     * 
      * @param mixed $domain domain name
      *
      * @access public
@@ -658,6 +685,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     }
     /**
      * listDomains 
+     * 
+     * List domains.  The page and perPage arguments support
+     * optional pagination.
      * 
      * @param int $page    page number, default 0 (don't paginate)
      * @param int $perPage domains per page, default 0 (don't paginate)
@@ -690,6 +720,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * domainCount 
      * 
+     * Count domains.
+     * 
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
      * @return int count on success
@@ -709,6 +741,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     }
     /**
      * addDomain 
+     * 
+     * Add domain.
      * 
      * @param string $domain   domain name
      * @param string $password password
@@ -730,6 +764,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * addAliasDomain 
      * 
+     * Add alias domain.
+     * 
      * @param mixed $domain domain name
      * @param mixed $alias  alias name
      *
@@ -748,6 +784,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     }
     /**
      * delDomain 
+     * 
+     * Delete domain.
      * 
      * @param mixed $domain domain name
      *
@@ -768,7 +806,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * findDomain 
      * 
-     * return page number that the domain occurs on
+     * Return page number that the domain occurs on.
      * 
      * @param mixed $domain  domain name
      * @param mixed $perPage domains per page
@@ -793,6 +831,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * addUser 
      * 
+     * Add a user.
+     * 
      * @param string $domain   domain name
      * @param string $user     user name
      * @param string $password password
@@ -814,6 +854,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * delUser 
      * 
+     * Delete a user.
+     * 
      * @param string $domain domain name
      * @param string $user   user name
      *
@@ -834,6 +876,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * modUser 
+     * 
+     * Modify a user.
      * 
      * @param string $domain   domain name
      * @param string $user     user name
@@ -896,6 +940,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * userInfo 
      * 
+     * Get user info array.
+     * 
      * @param string $domain domain name
      * @param string $user   user name
      *
@@ -915,6 +961,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * listUsers 
+     * 
+     * List users for a domain.  page and perPage
+     * arguments allow for optional pagination.
      * 
      * @param string $domain  domain name
      * @param int    $page    page number
@@ -962,6 +1011,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * userCount 
      * 
+     * Count users in a domain.
+     * 
      * @param string $domain domain name
      *
      * @access public
@@ -984,6 +1035,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * getLastAuth 
+     * 
+     * Get last authentication time and IP address as an array 
+     * for a user.
      * 
      * @param string $domain domain name
      * @param string $user   user name
@@ -1030,12 +1084,16 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * isSysAdmin 
      * 
-     * @param string $loginUser user account info
+     * Does this $loginUser (user info array)  have system administrator 
+     * rights?  The optional $loginUser (array) argument allows a 
+     * system administrator to check the rights of a different account.
+     * 
+     * @param array $loginUser user account info
      *
      * @access public
      * @return bool result of $this->getGidBit()
      */
-    function isSysAdmin($loginUser = null)
+    public function isSysAdmin($loginUser = null)
     {
         if (is_null($loginUser)) {
             $loginUser = $this->loginUser;
@@ -1046,7 +1104,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * isDomainAdmin 
      * 
-     * Determine if this is a domain administrator for this domain
+     * Determine if the user is a domain administrator for a domain.  Optional
+     * $loginUser argument defaults to the logged in user.
      * 
      * @param mixed  $domain    domain name
      * @param string $loginUser user account info
@@ -1054,7 +1113,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @access public
      * @return void
      */
-    function isDomainAdmin($domain, $loginUser = null)
+    public function isDomainAdmin($domain, $loginUser = null)
     {
         if (is_null($loginUser)) {
             $loginUser = $this->loginUser;
@@ -1086,7 +1145,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @return void
      * @see authenticate()
      */
-    function isUserAdmin($name, $domain)
+    public function isUserAdmin($name, $domain)
     {
         if ($this->isDomainAdmin($domain)) {
             return true;
@@ -1098,12 +1157,14 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * getQuota 
      * 
+     * Format a maildir++ quota as human readable (10MB).
+     * 
      * @param string $quota quota string
      *
      * @access public
      * @return string
      */
-    function getQuota($quota)
+    public function getQuota($quota)
     {
         if (preg_match('/S$/', $quota)) {
             $quota = preg_replace('/S$/', '', $quota);
@@ -1113,80 +1174,11 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
         }
         return $quota;
     }
-    /**
-     * Parse Home dot-qmail
-     *
-     * Evaluate contents of a .qmail file in a user's home directory.
-     * Looking for routing types standard, delete, or forward, with optional
-     * saving of messages, as well as vacation messages.
-     *
-     * @param mixed $contents     .qmail contents
-     * @param mixed $account_info user account info
-     *
-     * @access public
-     * @return array $defaults
-     */
-    function parseHomeDotqmail($contents, $account_info)
-    {
-        $is_standard  = false;
-        $is_deleted   = false;
-        $is_forwarded = false;
-        // Set default template settings
-        $defaults['comment']          = $account_info['comment'];
-        $defaults['forward']          = '';
-        $defaults['save_a_copy']      = '';
-        $defaults['vacation']         = '';
-        $defaults['vacation_subject'] = '';
-        $defaults['vacation_body']    = '';
-        if (empty($contents)) {
-            $is_standard = true;
-        }
-        if ((is_array($contents)
-            && count($contents) == 1
-            && $contents[0] == '# delete')) {
-            $is_deleted = true;
-        }
-        if ($is_standard) {
-            $defaults['routing'] = 'routing_standard';
-        } else if ($is_deleted) {
-            $defaults['routing'] = 'routing_deleted';
-        } else {
-            // now let's parse it
-            while (list($key, $val) = each($contents)) {
-                if ($val == $account_info['user_dir'].'/Maildir/'
-                    || $val == './Maildir/') {
 
-                    $defaults['save_a_copy'] = ' checked';
-                    continue;
-                }
-                if (preg_match("({$this->vpopmailRobotProgram})", $val)) {
-                    $vacation_array = $this->getVacation($account_info, $val);
-
-                    while (list($vacKey, $vacVal) = each($vacation_array)) {
-                        $defaults[$vacKey] = $vacVal;
-                    }
-                    continue;
-                } else {
-                    if (Validate::email(preg_replace('/^&/', '', $val),
-                        array('use_rfc822' => 1))) {
-
-                        $is_forwarded        = true;
-                        $defaults['routing'] = 'routing_forwarded';
-                        $defaults['forward'] = preg_replace('/^&/', '', $val);
-                    }
-                }
-            }
-            // See if default routing select applies
-            if (!$is_standard && !$is_deleted && !$is_forwarded) {
-                $defaults['routing'] = 'routing_standard';
-            }
-        }
-        return $defaults;
-    }
     /**
      * Get Vacaation Message Contents
      *
-     * Parse .qmail line contents to get message subject and meessage body
+     * Parse .qmail line contents to get message subject and meessage body.
      *
      * @param array  $user_info user info
      * @param string $line      .qmail line with path to vacation message.
@@ -1222,6 +1214,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * setVacation 
      * 
+     * Set vacation message (autorespond) values.
+     * 
      * @param string $user        user name
      * @param string $domain      domain name
      * @param string $subject     subject line
@@ -1256,6 +1250,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * delVacation 
      * 
+     * Delete vacation message.
+     * 
      * @param string $user        user name
      * @param string $domain      domain name
      * @param string $vacationDir vacation directory name, defaults to 'vacation'
@@ -1270,6 +1266,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
 
     /**
      * getAliasContents 
+     * 
+     * Take array of alias destinations and format them as 
+     * a comma delimited list (qmailadmin style)
      * 
      * @param mixed $contentsArray alias contents
      *
@@ -1294,7 +1293,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * aliasesToArray 
      * 
-     * take raw ListAlias output, and format into 
+     * Take raw listAlias() output, and format into 
      * associative arrays
      * 
      * @param array $aliasArray aliases
@@ -1334,12 +1333,14 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * displayForwardLine
      *
+     * Remove '&' prefix from a forward line for display.
+     *
      * @param string $line forward line
      *
      * @access public
      * @return parsed string
      */
-    function displayForwardLine($line)
+    public function displayForwardLine($line)
     {
         return preg_replace('/^&/', '', $line);
     }
@@ -1380,7 +1381,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     /**
      * paginateArray 
      * 
-     * A simple function to paginate an array.  Could probably be better.
+     * A simple function to paginate an array.
      * 
      * @param array $array array to paginate
      * @param int   $page  page to get
