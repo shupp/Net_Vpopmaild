@@ -25,8 +25,7 @@ require_once 'System.php';
  * Net_Vpopmaild_Base
  * 
  * Base class for Net_Vpopmaild.  This class provides the network
- * network connection, status checking methods, and some general
- * helper methods used.
+ * connection, status checking methods, and some general helper methods used.
  * 
  * @category Net
  * @package  Net_Vpopmaild
