@@ -16,7 +16,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <email>hostmaster@shupp.org</email>
         <active>yes</active>
     </lead>
-    <date>2007-11-10</date>
+    <date>2007-11-15</date>
     <version>
         <release>0.0.3</release>
         <api>0.0.3</api>
@@ -26,7 +26,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <api>alpha</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes>Split Class into Net_Vpopmaild_Base and Net_Vpopmaild.  Coding standard fixes.  Use System::tmpdir()</notes>
+    <notes>Split Class into Net_Vpopmaild_Base and Net_Vpopmaild.  Coding standard fixes.  Use System::tmpdir().  Remove parseHomeDotqmail(), as it's application specific.  Remove Validate dependency.</notes>
     <contents>
         <dir name="/">
             <dir name="docs" role="doc">
@@ -68,9 +68,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
                 <file baseinstalldir="tests/Net_Vpopmaild"
                       role="test"
                       name="060-vpopmaild-dotQmailSplit.phpt" />
-                <file baseinstalldir="tests/Net_Vpopmaild"
-                      role="test"
-                      name="065-vpopmaild-parseHomeDotqmail.phpt" />
                 <file baseinstalldir="tests/Net_Vpopmaild"
                       role="test"
                       name="070-vpopmaild-robotSet.phpt" />
@@ -202,13 +199,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
                       name="README" />
                 <file baseinstalldir="tests/Net_Vpopmaild"
                       role="test"
+                      name="tests-setpath.php.dist" />
+                <file baseinstalldir="tests/Net_Vpopmaild"
+                      role="test"
                       name="tests-config.php.dist" />
-                <file baseinstalldir="tests/Net_Vpopmaild"
-                      role="test"
-                      name="tests-setpath.php.phpt" />
-                <file baseinstalldir="tests/Net_Vpopmaild"
-                      role="test"
-                      name="tests-setpath.php" />
             </dir>
             <dir name="examples" role="doc" baseinstalldir="doc/Net_Vpopmaild">
                 <file name="login.php"
@@ -246,10 +240,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
                 <name>Log</name>
                 <channel>pear.php.net</channel>
             </package>
-            <package>
-                <name>Validate</name>
-                <channel>pear.php.net</channel>
-            </package>
         </required>
     </dependencies>
     <phprelease />
@@ -263,9 +253,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
                 <release>alpha</release>
                 <api>alpha</api>
             </stability>
-            <date>2007-11-10</date>
+            <date>2007-11-15</date>
             <license uri="http://www.php.net/license">PHP License</license>
-            <notes>Split Class into Net_Vpopmaild_Base and Net_Vpopmaild.  Coding standard fixes.  Use System::tmpdir().</notes>
+            <notes>Split Class into Net_Vpopmaild_Base and Net_Vpopmaild.  Coding standard fixes.  Use System::tmpdir().  Remove parseHomeDotqmail(), as it's application specific.  Remove Validate dependency.</notes>
         </release>
         <release>
             <version>
