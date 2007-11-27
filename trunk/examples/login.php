@@ -11,7 +11,7 @@ $vpop = new Net_Vpopmaild();
 try {
     // The host, port, and timeout below are the defaults and can be omitted
     $vpop->connect('localhost', '89', '30');
-} catch (Net_Vpopmaild_Exception $e) {
+} catch (Net_Vpopmaild_FatalException $e) {
     echo 'Error connecting to vpopmaild: ' . $e->getMessage();
     exit;
 }
