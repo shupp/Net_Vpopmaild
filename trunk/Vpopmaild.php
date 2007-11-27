@@ -10,7 +10,7 @@
  * @author   Bill Shupp <hostmaster@shupp.org> 
  * @author   Rick Widmer <vchkpw@developersdesk.com>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  * @todo Finish ezmlm functions, waiting on vpopmaild updates
  * @todo Robot creation - check for existing accounts first?  or 
  * is it an issue with OS X fs, or vpopmaild?
@@ -33,7 +33,7 @@ require_once 'Net/Vpopmaild/FatalException.php';
  * @author   Bill Shupp <hostmaster@shupp.org> 
  * @author   Rick Widmer <vchkpw@developersdesk.com>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  */
 class Net_Vpopmaild extends Net_Vpopmaild_Base
 {

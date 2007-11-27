@@ -10,7 +10,7 @@
  * @author   Bill Shupp <hostmaster@shupp.org> 
  * @author   Rick Widmer <vchkpw@developersdesk.com>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  * @todo     Do not rely on PHP4 packages
  * @todo     allow readInfo() to support mutlitple items/arrays for listUsers()
  */
@@ -32,7 +32,7 @@ require_once 'System.php';
  * @author   Bill Shupp <hostmaster@shupp.org> 
  * @author   Rick Widmer <vchkpw@developersdesk.com>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  */
 class Net_Vpopmaild_Base
 {

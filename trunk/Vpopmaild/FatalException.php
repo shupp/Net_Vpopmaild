@@ -12,7 +12,7 @@
  * @uses     PEAR_Exception
  * @author   Joe Stump <joe@joestump.net>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  */
 
 require_once 'PEAR/Exception.php';
@@ -29,7 +29,7 @@ require_once 'PEAR/Exception.php';
  * @uses     PEAR_Exception
  * @author   Joe Stump <joe@joestump.net>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  */
 class Net_Vpopmaild_FatalException extends PEAR_Exception
 {

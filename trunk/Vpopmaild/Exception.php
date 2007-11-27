@@ -12,7 +12,7 @@
  * @package  Net_Vpopmaild
  * @author   Bill Shupp <hostmaster@shupp.org>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild NetVpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  */
 
 require_once 'PEAR/Exception.php';
@@ -28,7 +28,7 @@ require_once 'PEAR/Exception.php';
  * @package  Net_Vpopmaild
  * @author   Bill Shupp <hostmaster@shupp.org>
  * @license  PHP 3.01  {@link http://www.php.net/license/3_01.txt}
- * @link     http://shupp.org/Net_Vpopmaild NetVpopmaild
+ * @link     http://trac.merchbox.com/trac/Net_Vpopmaild
  */
 class Net_Vpopmaild_Exception extends PEAR_Exception
 {
