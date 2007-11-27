@@ -7,7 +7,7 @@ http://pear.php.net/dtd/tasks-1.0.xsd
 http://pear.php.net/dtd/package-2.0
 http://pear.php.net/dtd/package-2.0.xsd">
     <name>Net_Vpopmaild</name>
-    <channel>pear.merchbox.com</channel>
+    <channel>pear.php.net</channel>
     <summary>Class for accessing Vpopmail's vpopmaild daemon</summary>
     <description>Supports all vpopmaild commands, such as adding/removing domains, users, robots (autoresponders), and ezmlm lists (todo), as well as modifying domain limits, ip maps, etc</description>
     <lead>
