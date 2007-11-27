@@ -1091,7 +1091,8 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param array $loginUser user account info
      *
      * @access public
-     * @return bool result of $this->getGidBit()
+     * @return bool result of getGidBit()
+     * @see getGidBit()
      */
     public function isSysAdmin($loginUser = null)
     {
@@ -1388,7 +1389,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param int   $limit limit
      * 
      * @access public
-     * @return array paginatd array
+     * @return array paginated array
      */
     public function paginateArray($array, $page, $limit)
     {
