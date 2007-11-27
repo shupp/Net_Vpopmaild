@@ -202,11 +202,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * List all IP map entries.  Requires vpopmail to have IP 
      * Alias Domains support compiled in.
      * 
-     * return sorted ip map list
-     * 
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed ip map array on success
+     * @return array sorted ip map array on success
      */
     public function showIPMap()
     {
