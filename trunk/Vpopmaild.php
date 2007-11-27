@@ -49,7 +49,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     public function clogin($email, $password)
     {
@@ -163,7 +163,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function addIPMap($ip, $domain)
     {
@@ -185,7 +185,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function delIPMap($ip, $domain)
     {
@@ -316,7 +316,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function robotSet(
                         $domain,
@@ -461,7 +461,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param string $user   user name optional
      *
      * @access public
-     * @return alias array on success, null on failure
+     * @return array alias array on success, null on failure
      */
     public function listAlias($domain, $user = '')
     {
@@ -492,7 +492,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function removeAlias($alias, $destination)
     {
@@ -513,7 +513,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function deleteAlias($alias)
     {
@@ -535,7 +535,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function addAlias($alias, $destination)
     {
@@ -556,7 +556,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return array limits array on success
+     * @return bool array limits array on success
      */
     public function getLimits($domain)
     {
@@ -580,7 +580,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return bool true on success
      */
     public function setLimits($domain, $limits)
     {
@@ -651,7 +651,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function delLimits($domain)
     {
@@ -672,7 +672,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed dom_info array on success
+     * @return array dom_info array on success
      */
     public function domainInfo($domain)
     {
@@ -694,7 +694,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed domains array on success
+     * @return array domains array on success
      */
     public function listDomains($page = 0, $perPage = 0)
     {
@@ -749,7 +749,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function addDomain($domain, $password)
     {
@@ -771,7 +771,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return bool true on success
      */
     public function addAliasDomain($domain, $alias)
     {
@@ -791,7 +791,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return bool true on success
      */
     public function delDomain($domain)
     {
@@ -812,7 +812,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param mixed $perPage domains per page
      *
      * @access public
-     * @return int page number on success, null on on failure
+     * @return mixed page number on success, null on on failure
      */
     public function findDomain($domain, $perPage = 0)
     {
@@ -839,7 +839,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return bool true on success
      */
     public function addUser($domain, $user, $password)
     {
@@ -861,7 +861,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function delUser($domain, $user)
     {
@@ -885,7 +885,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true success
+     * @return bool true success
      */
     public function modUser($domain, $user, $userInfo)
     {
@@ -947,7 +947,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed user info array on success
+     * @return array user info array on success
      */
     public function userInfo($domain, $user)
     {
@@ -970,7 +970,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param int    $perPage domains per page
      *
      * @access public
-     * @return mixed users array on success, null on failure
+     * @return array users array on success, null on failure
      */
     public function listUsers($domain, $page = 0, $perPage = 0)
     {
@@ -1044,7 +1044,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return array('time' => (timestamp), 'ip' => IP (0.0.0.0 for none))
+     * @return array array('time' => (timestamp), 'ip' => IP (0.0.0.0 for none))
      */
     public function getLastAuth($domain, $user)
     {
@@ -1162,7 +1162,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param string $quota quota string
      *
      * @access public
-     * @return string
+     * @return string formatted quota string
      */
     public function getQuota($quota)
     {
@@ -1257,7 +1257,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param string $vacationDir vacation directory name, defaults to 'vacation'
      *
      * @access public
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     public function delVacation($user, $domain, $vacationDir = 'vacation')
     {
@@ -1273,7 +1273,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param mixed $contentsArray alias contents
      *
      * @access public
-     * @return string
+     * @return string alias contents as string
      */
     public function getAliasContents($contentsArray)
     {
@@ -1299,7 +1299,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param array $aliasArray aliases
      * 
      * @access protected
-     * @return array of aliases
+     * @return array array of aliases
      */
     protected function aliasesToArray($aliasArray)
     {
@@ -1338,7 +1338,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param string $line forward line
      *
      * @access public
-     * @return parsed string
+     * @return string parsed forward string
      */
     public function displayForwardLine($line)
     {
@@ -1354,7 +1354,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param string $type     type to look for (forwards, responders, lists)
      * 
      * @access public
-     * @return array of parsed aliases
+     * @return array array of parsed aliases
      */
     public function parseAliases($in_array, $type)
     {
@@ -1388,7 +1388,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @param int   $limit limit
      * 
      * @access public
-     * @return array
+     * @return array paginatd array
      */
     public function paginateArray($array, $page, $limit)
     {

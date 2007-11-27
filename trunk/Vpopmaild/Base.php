@@ -196,6 +196,7 @@ class Net_Vpopmaild_Base
      * (/tmp/vpopmaild.log on Unix, for example)
      *
      * @access public
+     * @throws Net_Vpopmaild_Exception on failure to create a Log object
      * @return void
      */
     public function setDebug($value = true, $logFile = null)
@@ -284,7 +285,7 @@ class Net_Vpopmaild_Base
      * @param string $data string to be checked
      *
      * @access private
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     protected function statusOk($data)
     {
@@ -303,7 +304,7 @@ class Net_Vpopmaild_Base
      * @param string $data string to be checked
      *
      * @access private
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     protected function statusOkMore($data)
     {
@@ -321,7 +322,7 @@ class Net_Vpopmaild_Base
      * @param string $data string to be checked
      *
      * @access private
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     protected function statusOkNoMore($data)
     {
@@ -339,7 +340,7 @@ class Net_Vpopmaild_Base
      * @param string $data string to be checked
      *
      * @access private
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     protected function statusErr($data)
     {
@@ -357,7 +358,7 @@ class Net_Vpopmaild_Base
      * @param string $data string to be checked
      *
      * @access private
-     * @return true on success, false on failure
+     * @return bool true on success, false on failure
      */
     protected function dotOnly($data)
     {
@@ -375,7 +376,7 @@ class Net_Vpopmaild_Base
      * @param string $data string to be checked
      *
      * @access private
-     * @return mixed
+     * @return bool true on success
      * @throws Net_Vpopmaild_FatalException if Net_Socket::writeLine() 
      * returns PEAR_Error
      */
@@ -395,7 +396,7 @@ class Net_Vpopmaild_Base
      * Read line from socket.  Uses Net_Socket::readLine().
      * 
      * @access private
-     * @return string line
+     * @return string line read from socket
      * @throws Net_Vpopmaild_FatalException if Net_Socket::readLine() 
      * returns PEAR_Error
      */
@@ -434,7 +435,7 @@ class Net_Vpopmaild_Base
      * @param string $type   type file or directory, defaults to 'file'
      *
      * @access private
-     * @return var $basePath
+     * @return string formatted base path
      */
     protected function formatBasePath($domain,
                                       $user = '',
@@ -461,7 +462,7 @@ class Net_Vpopmaild_Base
      * NOTE:  +OK has already been read.
      * 
      * @access private
-     * @return mixed info array
+     * @return array info array
      */
     protected function readInfo()
     {
@@ -497,7 +498,7 @@ class Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return bool true on success
      */
     public function rmFile($domain, $user = '', $path = '')
     {
@@ -522,7 +523,7 @@ class Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return true on success
+     * @return bool true on success
      */
     public function writeFile($contents, $domain, $user = '', $path = '')
     {
@@ -554,7 +555,7 @@ class Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed file contents as array on success
+     * @return array file contents as array on success
      */
     public function readFile($domain, $user = '', $path = '')
     {
@@ -586,7 +587,7 @@ class Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return array of directory contents on success
+     * @return array array of directory contents on success
      */
     public function listDir($domain, $user = '', $path = '')
     {
@@ -644,7 +645,7 @@ class Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return mixed true on success
+     * @return bool true on success
      */
     public function mkDir($domain, $user = '', $path = '')
     {
