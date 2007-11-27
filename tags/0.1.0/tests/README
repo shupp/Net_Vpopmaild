@@ -1,0 +1,14 @@
+Before starting, copy tests-setpath.php.dist to tests-setpath.php, and 
+tests-config.php.dist to tests-config.php.  Then make sure the contents 
+of each are correct.
+
+To run all tests, execute:
+
+    pear run-tests
+
+To run selected tests, execte:
+
+    pear run-tests <filename> [<filename>] ...
+
+Note that some tests require previous tests to be run for them to work
+properly.
