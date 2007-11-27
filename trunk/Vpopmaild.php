@@ -556,7 +556,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      *
      * @access public
      * @throws Net_Vpopmaild_Exception on failure
-     * @return bool array limits array on success
+     * @return array limits array on success
      */
     public function getLimits($domain)
     {
