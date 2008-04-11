@@ -251,6 +251,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
         }
         reset($fileContents);
         while (list(, $line) = each($fileContents)) {
+            if (strlen($line) < 1) {
+                continue;
+            }
             switch ($line{0}) {
             case '#':
                 $result['Comment'][] = $line;
