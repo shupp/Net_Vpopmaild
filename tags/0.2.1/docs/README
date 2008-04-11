@@ -1,0 +1,5 @@
+Net_Vpopmaild
+
+Not much documenation yet...  docs.sh can generate the API documentation 
+for you.  See http://trac.merchbox.com/toasteradmin for an example of an
+application using Net_Vpopmaild
