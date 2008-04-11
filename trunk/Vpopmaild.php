@@ -627,7 +627,7 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
         }
         // flag parms
         foreach ($flagParms as $name) {
-            if (!empty($limits[$name])) {
+            if (isset($limits[$name])) {
                 $value  = $limits[$name];
                 $status = $this->sockWrite("$name $value");
             }

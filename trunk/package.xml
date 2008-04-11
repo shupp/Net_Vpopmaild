@@ -16,9 +16,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <email>hostmaster@shupp.org</email>
         <active>yes</active>
     </lead>
-    <date>2007-11-27</date>
+    <date>2008-04-06</date>
     <version>
-        <release>0.1.0</release>
+        <release>0.2.0</release>
         <api>0.1.0</api>
     </version>
     <stability>
@@ -26,7 +26,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <api>alpha</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes>Update @return tags in doc blocks.  First public PEAR release.</notes>
+    <notes>* Fix bug in setLimits() - use isset() instead of !emtpy() so you don't lose values of 0.
+* Some docblock updates
+* Fix login example
+    </notes>
     <contents>
         <dir name="/">
             <dir name="docs" role="doc">
@@ -244,6 +247,21 @@ http://pear.php.net/dtd/package-2.0.xsd">
     </dependencies>
     <phprelease />
     <changelog>
+        <release>
+            <version>
+                <release>0.2.0</release>
+                <api>0.1.0</api>
+            </version>
+            <stability>                <release>alpha</release>
+                <api>alpha</api>
+            </stability>
+            <date>2008-04-06</date>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes>* Fix bug in setLimits() - use isset() instead of !emtpy() so you don't lose values of 0.
+* Some docblock updates
+* Fix login example
+            </notes>
+        </release>
         <release>
             <version>
                 <release>0.1.0</release>
