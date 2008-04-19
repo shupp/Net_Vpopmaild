@@ -16,17 +16,21 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <email>hostmaster@shupp.org</email>
         <active>yes</active>
     </lead>
-    <date>2008-04-10</date>
+    <date>2008-04-19</date>
     <version>
-        <release>0.2.1</release>
-        <api>0.1.0</api>
+        <release>0.3.0</release>
+        <api>0.2.0</api>
     </version>
     <stability>
-        <release>alpha</release>
-        <api>alpha</api>
+        <release>beta</release>
+        <api>beta</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes>* Fix notice in dotQmailSplit()</notes>
+    <notes>Made the string and flag parameters for the modUser and setLimits methods available through the API:
+        * Added getSetLimitsParms() method
+        * Added getMod() method
+        * Upgraded from alpha to beta
+    </notes>
     <contents>
         <dir name="/">
             <dir name="docs" role="doc">
@@ -244,6 +248,23 @@ http://pear.php.net/dtd/package-2.0.xsd">
     </dependencies>
     <phprelease />
     <changelog>
+        <release>
+            <version>
+                <release>0.3.0</release>
+                <api>0.2.0</api>
+            </version>
+            <stability>
+                <release>beta</release>
+                <api>beta</api>
+            </stability>
+            <date>2008-04-19</date>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes>Made the string and flag parameters for the modUser and setLimits methods available through the API:
+                * Added getSetLimitsParms() method
+                * Added getMod() method
+                * Upgraded from alpha to beta
+            </notes>
+        </release>
         <release>
             <version>
                 <release>0.2.1</release>

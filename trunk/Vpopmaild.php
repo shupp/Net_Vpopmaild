@@ -37,6 +37,78 @@ require_once 'Net/Vpopmaild/FatalException.php';
  */
 class Net_Vpopmaild extends Net_Vpopmaild_Base
 {
+    /**
+     * modUserParms 
+     * 
+     * Array of string parameters and flag parameters that are used by modUser().
+     * 
+     * @var    array
+     * @see    modUser()
+     * @see    getModUserParms()
+     * @access protected
+     */
+    protected $modUserParms = array('stringParms' => array('quota',
+                                    'comment',
+                                    'clear_text_password'),
+                                'flagParms' => array('no_password_change',
+                                    'no_pop',
+                                    'no_webmail',
+                                    'no_imap',
+                                    'no_smtp',
+                                    'bounce_mail',
+                                    'no_relay',
+                                    'no_dialup',
+                                    'user_flag_0',
+                                    'user_flag_1',
+                                    'user_flag_2',
+                                    'user_flag_3',
+                                    'system_admin_privileges',
+                                    'system_expert_privileges',
+                                    'domain_admin_privileges',
+                                    'override_domain_limits',
+                                    'no_spamassassin',
+                                    'no_maildrop',
+                                    'delete_spam')
+                              );
+
+    /**
+     * setLimitsParms 
+     * 
+     * Array of string parameters and flag parameters that are used by setLimits().
+     * 
+     * @var    array
+     * @see    setLimits()
+     * @see    getSetLimitsParms()
+     * @access protected
+     */
+    protected $setLimitsParms = array('stringParms' => array('max_popaccounts',
+                                        'max_aliases',
+                                        'max_forwards',
+                                        'max_autoresponders',
+                                        'max_mailinglists', 
+                                        'disk_quota',
+                                        'max_msgcount',
+                                        'default_quota',
+                                        'default_maxmsgcount'),
+                                    'flagParms' => array('disable_pop',
+                                        'disable_imap',
+                                        'disable_dialup',
+                                        'disable_password_changing',
+                                        'disable_webmail',
+                                        'disable_external_relay',
+                                        'disable_smtp',
+                                        'disable_spamassassin',
+                                        'delete_spam',
+                                        'perm_account',
+                                        'perm_alias',
+                                        'perm_forward',
+                                        'perm_autoresponder',
+                                        'perm_maillist',
+                                        'perm_maillist_users',
+                                        'perm_maillist_moderators',
+                                        'perm_quota',
+                                        'perm_defaultquota')
+                                );
 
     /**
      * clogin 
@@ -572,6 +644,19 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
     }
 
     /**
+     * getSetLimitsParms 
+     * 
+     * Getter for $this->setLimitsParms
+     * 
+     * @access protected
+     * @return array     $this->setLimtsParms array
+     */
+    protected function getSetLimitsParms()
+    {
+        return $this->setLimitsParms;
+    }
+
+    /**
      * setLimits 
      * 
      * Set vlimits for a domain.
@@ -585,36 +670,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      */
     public function setLimits($domain, $limits)
     {
-        static $stringParms = array(
-                                'max_popaccounts',
-                                'max_aliases',
-                                'max_forwards',
-                                'max_autoresponders',
-                                'max_mailinglists', 
-                                'disk_quota',
-                                'max_msgcount',
-                                'default_quota',
-                                'default_maxmsgcount');
-
-        static $flagParms = array(
-                                'disable_pop',
-                                'disable_imap',
-                                'disable_dialup',
-                                'disable_password_changing',
-                                'disable_webmail',
-                                'disable_external_relay',
-                                'disable_smtp',
-                                'disable_spamassassin',
-                                'delete_spam',
-                                'perm_account',
-                                'perm_alias',
-                                'perm_forward',
-                                'perm_autoresponder',
-                                'perm_maillist',
-                                'perm_maillist_users',
-                                'perm_maillist_moderators',
-                                'perm_quota',
-                                'perm_defaultquota');
+        $limitsParms = $this->getSetLimitsParms();
+        $stringParms = $limitsParms['stringParms'];
+        $flagParms   = $limitsParms['flagParms'];
 
         $status = $this->sockWrite("set_limits $domain");
         $status = $this->sockRead();
@@ -874,6 +932,18 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
         return true;
     }
 
+    /**
+     * getModUserParms 
+     * 
+     * Getter for $this->modUserParms
+     * 
+     * @access protected
+     * @return array     modUserParms array
+     */
+    protected function getModUserParms()
+    {
+        return $this->modUserParms;
+    }
 
     /**
      * modUser 
@@ -890,29 +960,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      */
     public function modUser($domain, $user, $userInfo)
     {
-        static $stringParms = array(   'quota',
-                                'comment',
-                                'clear_text_password');
-
-        static $flagParms = array(     'no_password_change',
-                                'no_pop',
-                                'no_webmail',
-                                'no_imap',
-                                'no_smtp',
-                                'bounce_mail',
-                                'no_relay',
-                                'no_dialup',
-                                'user_flag_0',
-                                'user_flag_1',
-                                'user_flag_2',
-                                'user_flag_3',
-                                'system_admin_privileges',
-                                'system_expert_privileges',
-                                'domain_admin_privileges',
-                                'override_domain_limits',
-                                'no_spamassassin',
-                                'no_maildrop',
-                                'delete_spam',);
+        $userParms   = $this->getModUserParms();
+        $flagParms   = $userParms['flagParms'];
+        $stringParms = $userParms['stringParms'];
 
         $status = $this->sockWrite("mod_user $user@$domain");
         $status = $this->sockRead();
