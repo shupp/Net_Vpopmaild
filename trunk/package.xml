@@ -16,9 +16,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <email>hostmaster@shupp.org</email>
         <active>yes</active>
     </lead>
-    <date>2008-04-19</date>
+    <date>2008-04-20</date>
     <version>
-        <release>0.3.0</release>
+        <release>0.3.1</release>
         <api>0.2.0</api>
     </version>
     <stability>
@@ -26,10 +26,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
         <api>beta</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes>Made the string and flag parameters for the modUser and setLimits methods available through the API:
-        * Added getSetLimitsParms() method
-        * Added getMod() method
-        * Upgraded from alpha to beta
+    <notes>Incorrect visibility on getSetLimitsParms() and getModUserParms() methods
     </notes>
     <contents>
         <dir name="/">
@@ -250,6 +247,21 @@ http://pear.php.net/dtd/package-2.0.xsd">
     <changelog>
         <release>
             <version>
+                <release>0.3.1</release>
+                <api>0.2.0</api>
+            </version>
+            <stability>
+                <release>beta</release>
+                <api>beta</api>
+            </stability>
+            <date>2008-04-20</date>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes>Incorrect visibility on getSetLimitsParams() and getModUserParams() methods
+            </notes>
+        </release>
+
+        <release>
+            <version>
                 <release>0.3.0</release>
                 <api>0.2.0</api>
             </version>
@@ -261,7 +273,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
             <license uri="http://www.php.net/license">PHP License</license>
             <notes>Made the string and flag parameters for the modUser and setLimits methods available through the API:
                 * Added getSetLimitsParms() method
-                * Added getMod() method
+                * Added getModUserParms() method
                 * Upgraded from alpha to beta
             </notes>
         </release>
