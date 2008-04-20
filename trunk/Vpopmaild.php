@@ -79,9 +79,9 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * @var    array
      * @see    setLimits()
      * @see    getSetLimitsParms()
-     * @access public
+     * @access protected
      */
-    public $setLimitsParms = array('stringParms' => array('max_popaccounts',
+    protected $setLimitsParms = array('stringParms' => array('max_popaccounts',
                                         'max_aliases',
                                         'max_forwards',
                                         'max_autoresponders',
@@ -648,10 +648,10 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
      * 
      * Getter for $this->setLimitsParms
      * 
-     * @access protected
+     * @access public
      * @return array     $this->setLimtsParms array
      */
-    protected function getSetLimitsParms()
+    public function getSetLimitsParms()
     {
         return $this->setLimitsParms;
     }
