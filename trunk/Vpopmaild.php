@@ -638,7 +638,6 @@ class Net_Vpopmaild extends Net_Vpopmaild_Base
         if (!$this->statusOk($status)) {
             throw new Net_Vpopmaild_Exception($status);
         }
-        $status = $this->sockRead();
         $limits = $this->readInfo();
         return $limits;
     }
